@@ -1,0 +1,19 @@
+{% extends '::base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('bundles/altaxonomy/css/taxonomy.css') }}" type="text/css" rel="stylesheet" />
+{% endblock %}
+
+{% block body -%}
+    {% block taxonomy_title %}<h1>Taxonomy Bundle</h1>{% endblock %}
+
+    {% block taxonomy_content %}
+        <ul class="record-actions">
+            {% block taxonomy_actions -%}
+
+            {% endblock %}
+        </ul>
+    {% endblock %}
+
+{% endblock %}

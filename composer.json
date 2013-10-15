@@ -1,0 +1,20 @@
+{
+    "name": "activelamp/taxonomy-bundle",
+    "description": "Create vocabularies and terms with this bundle.",
+    "authors": [
+        {
+            "name": "Tom Friedhof",
+            "email": "tom@activelamp.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=5.3.0"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-0": {
+            "ActiveLAMP\\TaxonomyBundle": "src/"
+        }
+    }
+}

@@ -1,0 +1,53 @@
+{% extends 'ALTaxonomyBundle::layout.html.twig' %}
+
+{% block taxonomy_title %}<h1>Vocabularies</h1>{% endblock %}
+
+{% block taxonomy_content -%}
+    {% if entities|length > 0 %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Vocabulary Name</th>
+                    <th>Machine Name</th>
+                    <th>Description</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for entity in entities %}
+                <tr>
+                    <td><a href="{{ path('admin_structure_vocabulary-list_show', { 'id': entity.id }) }}">{{ entity.id }}</a></td>
+                    <td>{{ entity.labelName }}</td>
+                    <td>{{ entity.name }}</td>
+                    <td>{{ entity.description }}</td>
+                    <td>
+                        <div class="btn-group">
+                            <a href="{{ path('admin_structure_vocabulary-list_show', { 'id': entity.id }) }}" class="btn btn-default">View</a>
+                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="{{ path('admin_structure_vocabulary-list_edit', { 'id': entity.id }) }}">Edit</a></li>
+                                <li><a href="{{ path('admin_structure_taxonomy_term_new', { 'vocabulary_id': entity.id }) }}">Add Term</a></li>
+                                <li><a href="{{ path('admin_structure_taxonomy_term', { 'vocabulary_id': entity.id }) }}">List Terms</a></li>
+                                {# todo: Figure out how to send a DELETE method from link. #}
+                                {#<li><a href="{{ path('admin_structure_vocabulary-list_delete', { 'id': entity.id }) }}">Delete</a></li>#}
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No vocabularies defined. Add one by clicking the button below.</p>
+    {% endif %}
+
+    {{ parent() }}
+
+{% endblock %}
+
+{% block taxonomy_actions %}
+<li><a href="{{ path('admin_structure_vocabulary-list_new') }}" class="btn btn-primary">Create New Vocabulary</a></li>
+{% endblock %}
