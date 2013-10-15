@@ -42,7 +42,9 @@ class Vocabulary
      */
     private $description;
 
-
+    /**
+     * @var array
+     */
     private $terms;
 
 
@@ -123,29 +125,6 @@ class Vocabulary
     public function getDescription()
     {
         return $this->description;
-    }
-
-    /**
-     * Set options
-     *
-     * @param \stdClass $options
-     * @return List
-     */
-    public function setOptions($options)
-    {
-        $this->options = $options;
-    
-        return $this;
-    }
-
-    /**
-     * Get options
-     *
-     * @return \stdClass 
-     */
-    public function getOptions()
-    {
-        return $this->options;
     }
 
     function __toString()

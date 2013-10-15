@@ -1,6 +1,6 @@
 {% extends 'ALTaxonomyBundle::layout.html.twig' %}
 
-{% block taxonomy_title %}<h1>Vocabulary <em>{{ vocabulary }}</em> terms</h1>{% endblock %}
+{% block taxonomy_title %}<h1>Vocabulary <em>{{ vocabulary.labelName }}</em> terms</h1>{% endblock %}
 
 {% block taxonomy_content -%}
     {% if entities|length > 0 %}
@@ -20,13 +20,19 @@
                     <td>{{ entity.name }}</td>
                     <td>{{ entity.weight }}</td>
                     <td>
+                        <div class="btn-group">
+                            <a href="{{ path('admin_structure_taxonomy_term_show', { 'id': entity.id, 'vocabulary_id': vocabulary.id }) }}" class="btn btn-default">View</a>
+                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" role="menu">
+                                <li>
+                                    <a href="{{ path('admin_structure_taxonomy_term_edit', { 'id': entity.id, 'vocabulary_id': vocabulary.id }) }}">Edit</a>
+                                </li>
+                            </ul>
+                        </div>
                         <ul>
-                            <li>
-                                <a href="{{ path('admin_structure_taxonomy_term_show', { 'id': entity.id, 'vocabulary_id': vocabulary.id }) }}">show</a>
-                            </li>
-                            <li>
-                                <a href="{{ path('admin_structure_taxonomy_term_edit', { 'id': entity.id, 'vocabulary_id': vocabulary.id }) }}">edit</a>
-                            </li>
+
                         </ul>
                     </td>
                 </tr>
@@ -34,7 +40,7 @@
             </tbody>
         </table>
     {% else %}
-        <p>No terms defined for vocabulary {{ vocabulary }}. Add one by clicking the button below.</p>
+        <p>No terms defined for vocabulary {{ vocabulary.labelName }}. Add one by clicking the button below.</p>
     {% endif %}
 
     {{ parent() }}

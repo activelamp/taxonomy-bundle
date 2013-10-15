@@ -3,44 +3,54 @@
 namespace ActiveLAMP\TaxonomyBundle\Tests\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Doctrine\Common\Annotations\AnnotationRegistry;
 
 class TaxonomyControllerTest extends WebTestCase
 {
-    /*
+    protected function setUp() {
+        AnnotationRegistry::registerFile(__DIR__ . "../../../../../../../../sensio/framework-extra-bundle/Sensio/Bundle/FrameworkExtraBundle/Configuration/Route.php");
+        AnnotationRegistry::registerFile(__DIR__ . "../../../../../../../../sensio/framework-extra-bundle/Sensio/Bundle/FrameworkExtraBundle/Configuration/Method.php");
+        AnnotationRegistry::registerFile(__DIR__ . "../../../../../../../../sensio/framework-extra-bundle/Sensio/Bundle/FrameworkExtraBundle/Configuration/Template.php");
+    }
+
     public function testCompleteScenario()
     {
         // Create a new client to browse the application
         $client = static::createClient();
 
         // Create a new entry in the database
-        $crawler = $client->request('GET', '/admin/structure/options-list/');
-        $this->assertEquals(200, $client->getResponse()->getStatusCode(), "Unexpected HTTP status code for GET /admin/structure/options-list/");
-        $crawler = $client->click($crawler->selectLink('Create a new entry')->link());
+        $crawler = $client->request('GET', '/admin/structure/taxonomy/');
+        $this->assertEquals(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $crawler = $client->click($crawler->selectLink('Create New Vocabulary')->link());
 
         // Fill in the form and submit it
         $form = $crawler->selectButton('Create')->form(array(
-            'activelamp_TaxonomyBundle_optionslisttype[field_name]'  => 'Test',
-            // ... other fields to fill
+            'activelamp_taxonomybundle_vocabulary[labelName]'  => 'Rating',
+            'activelamp_taxonomybundle_vocabulary[name]'  => 'rating',
+            'activelamp_taxonomybundle_vocabulary[description]'  => 'Test adding a rating vocabulary',
         ));
 
         $client->submit($form);
         $crawler = $client->followRedirect();
 
         // Check data in the show view
-        $this->assertGreaterThan(0, $crawler->filter('td:contains("Test")')->count(), 'Missing element td:contains("Test")');
+        $this->assertGreaterThan(0, $crawler->filter('td:contains("Rating")')->count(), 'Missing element td:contains("Rating")');
 
         // Edit the entity
         $crawler = $client->click($crawler->selectLink('Edit')->link());
 
-        $form = $crawler->selectButton('Edit')->form(array(
-            'activelamp_TaxonomyBundle_optionslisttype[field_name]'  => 'Foo',
-            // ... other fields to fill
+        $form = $crawler->selectButton('Update')->form(array(
+            'activelamp_taxonomybundle_vocabulary[labelName]'  => 'Foo',
+            'activelamp_taxonomybundle_vocabulary[name]'  => 'foo',
+            'activelamp_taxonomybundle_vocabulary[description]'  => 'Updated rating to Foo',
         ));
 
         $client->submit($form);
         $crawler = $client->followRedirect();
+        $this->assertGreaterThan(0, $crawler->filter('td:contains("Foo")')->count(), 'Missing element td:contains("Foo")');
 
         // Check the element contains an attribute with value equals "Foo"
+        $crawler = $client->click($crawler->selectLink('Edit')->link());
         $this->assertGreaterThan(0, $crawler->filter('[value="Foo"]')->count(), 'Missing element [value="Foo"]');
 
         // Delete the entity
@@ -51,5 +61,4 @@ class TaxonomyControllerTest extends WebTestCase
         $this->assertNotRegExp('/Foo/', $client->getResponse()->getContent());
     }
 
-    */
 }

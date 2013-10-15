@@ -22,7 +22,7 @@ class Term
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="ActiveLAMP\TaxonomyBundle\Entity\Vocabulary")
+     * @ORM\ManyToOne(targetEntity="ActiveLAMP\TaxonomyBundle\Entity\Vocabulary", inversedBy="terms")
      * @ORM\JoinColumn(name="vocabulary_id", referencedColumnName="id", onDelete="CASCADE")
      */
     private $vocabulary;

@@ -3,42 +3,76 @@
 namespace ActiveLAMP\TaxonomyBundle\Tests\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use ActiveLAMP\TaxonomyBundle\Entity\Vocabulary;
+use Doctrine\Common\Annotations\AnnotationRegistry;
 
 class TermControllerTest extends WebTestCase
 {
-    /*
+    protected $vocabId;
+
+    /**
+     * Create a vocabulary to add terms to.
+     */
+    protected function setUp() {
+        AnnotationRegistry::registerFile(__DIR__ . "../../../../../../../../doctrine/orm/lib/Doctrine/ORM/Mapping/Driver/DoctrineAnnotations.php");
+        AnnotationRegistry::registerFile(__DIR__ . "../../../../../../../../sensio/framework-extra-bundle/Sensio/Bundle/FrameworkExtraBundle/Configuration/Route.php");
+        AnnotationRegistry::registerFile(__DIR__ . "../../../../../../../../sensio/framework-extra-bundle/Sensio/Bundle/FrameworkExtraBundle/Configuration/Method.php");
+        AnnotationRegistry::registerFile(__DIR__ . "../../../../../../../../sensio/framework-extra-bundle/Sensio/Bundle/FrameworkExtraBundle/Configuration/Template.php");
+        // Boot the kernel to get access to the container.
+        $kernel = static::createKernel();
+        $kernel->boot();
+
+        // Setup a new vocabulary for testing.
+        $entity = new Vocabulary();
+        $entity->setLabelName('Testing Vocabulary');
+        $entity->setName('testing_vocabulary');
+        $entity->setDescription('Description for Vocabulary.' . $entity->getId());
+
+        $em = $kernel->getContainer()->get('doctrine.orm.entity_manager');
+        $em->persist($entity);
+        $em->flush();
+
+        $this->vocabId = $entity->getId();
+    }
+
     public function testCompleteScenario()
     {
         // Create a new client to browse the application
         $client = static::createClient();
 
         // Create a new entry in the database
-        $crawler = $client->request('GET', '/admin/structure/taxonomy/term/');
-        $this->assertEquals(200, $client->getResponse()->getStatusCode(), "Unexpected HTTP status code for GET /admin/structure/taxonomy/term/");
-        $crawler = $client->click($crawler->selectLink('Create a new entry')->link());
+        $crawler = $client->request('GET', "/admin/structure/taxonomy/$this->vocabId/term/");
+        $this->assertEquals(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $crawler = $client->click($crawler->selectLink('Add Term')->link());
 
         // Fill in the form and submit it
         $form = $crawler->selectButton('Create')->form(array(
-            'activelamp_taxonomybundle_termtype[field_name]'  => 'Test',
-            // ... other fields to fill
+            'activelamp_taxonomybundle_term[name]'  => 'Test Term',
+            'activelamp_taxonomybundle_term[weight]' => 0
         ));
 
         $client->submit($form);
         $crawler = $client->followRedirect();
+        // Check to see that we are redirected back to the add term page
+        $this->assertGreaterThan(0, $crawler->filter('h1:contains("Add Term")')->count(), 'Add Term text missing in title.');
+        $this->assertGreaterThan(0, $crawler->filter('input[value="Create"]')->count(), 'Create button does not exist.');
+
+        $crawler = $client->click($crawler->selectLink('Cancel')->link());
 
         // Check data in the show view
-        $this->assertGreaterThan(0, $crawler->filter('td:contains("Test")')->count(), 'Missing element td:contains("Test")');
+        $this->assertGreaterThan(0, $crawler->filter('td:contains("Test Term")')->count(), 'Missing element td:contains("Test Term")');
 
         // Edit the entity
         $crawler = $client->click($crawler->selectLink('Edit')->link());
 
-        $form = $crawler->selectButton('Edit')->form(array(
-            'activelamp_taxonomybundle_termtype[field_name]'  => 'Foo',
-            // ... other fields to fill
+        $form = $crawler->selectButton('Update')->form(array(
+                'activelamp_taxonomybundle_term[name]'  => 'Foo',
+                'activelamp_taxonomybundle_term[weight]' => 10
         ));
 
         $client->submit($form);
         $crawler = $client->followRedirect();
+        $crawler = $client->click($crawler->selectLink('Edit')->link());
 
         // Check the element contains an attribute with value equals "Foo"
         $this->assertGreaterThan(0, $crawler->filter('[value="Foo"]')->count(), 'Missing element [value="Foo"]');
@@ -51,5 +85,4 @@ class TermControllerTest extends WebTestCase
         $this->assertNotRegExp('/Foo/', $client->getResponse()->getContent());
     }
 
-    */
 }

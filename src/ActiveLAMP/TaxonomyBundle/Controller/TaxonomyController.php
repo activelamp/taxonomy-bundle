@@ -254,6 +254,7 @@ class TaxonomyController extends Controller
      * @return \ActiveLAMP\TaxonomyBundle\Entity\Vocabulary
      */
     private function getVocabulary($vocabulary_id) {
+        /** @var \Doctrine\Common\Persistence\ObjectManager $em */
         $em = $this->getDoctrine()->getManager();
         return $em->getRepository('ALTaxonomyBundle:Vocabulary')->find($vocabulary_id);
     }
