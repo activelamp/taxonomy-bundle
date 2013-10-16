@@ -242,7 +242,8 @@ class TaxonomyController extends Controller
         ;
     }
 
-    private function getTerms($vocabulary_id) {
+    private function getTerms($vocabulary_id)
+    {
         $em = $this->getDoctrine()->getManager();
         return $em->getRepository('ALTaxonomyBundle:Term')->findBy(array('vocabulary' => $this->getVocabulary($vocabulary_id)));
     }
@@ -253,7 +254,8 @@ class TaxonomyController extends Controller
      * @param $vocabulary_id
      * @return \ActiveLAMP\TaxonomyBundle\Entity\Vocabulary
      */
-    private function getVocabulary($vocabulary_id) {
+    private function getVocabulary($vocabulary_id)
+    {
         /** @var \Doctrine\Common\Persistence\ObjectManager $em */
         $em = $this->getDoctrine()->getManager();
         return $em->getRepository('ALTaxonomyBundle:Vocabulary')->find($vocabulary_id);
