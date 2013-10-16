@@ -8,12 +8,14 @@ use Doctrine\Common\Annotations\AnnotationRegistry;
 
 class TermControllerTest extends WebTestCase
 {
-    protected $vocabId;
+    protected $vocabulary;
+    protected $em;
 
     /**
      * Create a vocabulary to add terms to.
      */
-    protected function setUp() {
+    protected function setUp()
+    {
         AnnotationRegistry::registerFile(__DIR__ . "../../../../../../../../doctrine/orm/lib/Doctrine/ORM/Mapping/Driver/DoctrineAnnotations.php");
         AnnotationRegistry::registerFile(__DIR__ . "../../../../../../../../sensio/framework-extra-bundle/Sensio/Bundle/FrameworkExtraBundle/Configuration/Route.php");
         AnnotationRegistry::registerFile(__DIR__ . "../../../../../../../../sensio/framework-extra-bundle/Sensio/Bundle/FrameworkExtraBundle/Configuration/Method.php");
@@ -28,11 +30,20 @@ class TermControllerTest extends WebTestCase
         $entity->setName('testing_vocabulary');
         $entity->setDescription('Description for Vocabulary.' . $entity->getId());
 
-        $em = $kernel->getContainer()->get('doctrine.orm.entity_manager');
-        $em->persist($entity);
-        $em->flush();
+        $this->em = $kernel->getContainer()->get('doctrine.orm.entity_manager');
+        $this->em->persist($entity);
+        $this->em->flush();
 
-        $this->vocabId = $entity->getId();
+        $this->vocabulary = $entity;
+    }
+
+    /**
+     * Remove the vocabulary that was setUp() for this test.
+     */
+    protected function tearDown()
+    {
+        $this->em->remove($this->vocabulary);
+        $this->em->flush();
     }
 
     public function testCompleteScenario()
@@ -41,7 +52,7 @@ class TermControllerTest extends WebTestCase
         $client = static::createClient();
 
         // Create a new entry in the database
-        $crawler = $client->request('GET', "/admin/structure/taxonomy/$this->vocabId/term/");
+        $crawler = $client->request('GET', '/admin/structure/taxonomy/' . $this->vocabulary->getId() . '/term/');
         $this->assertEquals(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
         $crawler = $client->click($crawler->selectLink('Add Term')->link());
 
@@ -66,8 +77,8 @@ class TermControllerTest extends WebTestCase
         $crawler = $client->click($crawler->selectLink('Edit')->link());
 
         $form = $crawler->selectButton('Update')->form(array(
-                'activelamp_taxonomybundle_term[name]'  => 'Foo',
-                'activelamp_taxonomybundle_term[weight]' => 10
+            'activelamp_taxonomybundle_term[name]'  => 'Foo',
+            'activelamp_taxonomybundle_term[weight]' => 10
         ));
 
         $client->submit($form);
