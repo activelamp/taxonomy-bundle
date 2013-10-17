@@ -23,3 +23,6 @@ function add_route($app_dir) {
 
 add_bundle('ActiveLAMP\TaxonomyBundle\ALTaxonomyBundle()', $app_dir);
 add_route($app_dir);
+
+print file_get_contents($app_dir . '/AppKernel.php');
+print file_get_contents($app_dir . '/config/routing.yml');
