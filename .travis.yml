@@ -13,18 +13,15 @@ env:
   - SYMFONY_VERSION=dev-master
 
 before_script:
-  - WD=`pwd`
-  - cd ../..
-
   # Install symfony full stack and symlink the bundle.
-  - composer -n create-project symfony/framework-standard-edition symfony/ ${SYMFONY_VERSION}
-  - ln -s $WD/activelamp/taxonomy-bundle/src/* symfony/src/
+  - composer -n create-project symfony/framework-standard-edition ../../symfony/ ${SYMFONY_VERSION}
+  - ln -s src/* ../../symfony/src/
 
   # Register the bundle and add routes.
-  - php $WD/activelamp/taxonomy-bundle/tests/setup_app.php
+  - php tests/setup_app.php
 
   # Setup the database
-  - cd symfony
+  - cd ../../symfony
   - php app/console doctrine:database:create
   - php app/console doctrine:schema:create
 
