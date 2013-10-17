@@ -16,7 +16,7 @@ class TermControllerTest extends WebTestCase
      */
     protected function setUp()
     {
-        $vendor_dir = realpath(__DIR__ . '/../../../../../../../symfony/vendor');
+        $vendor_dir = isset($_ENV['TRAVIS']) ? realpath(__DIR__ . '/../../../../../../../symfony/vendor') : realpath(__DIR__ . '/' . $_ENV['VENDOR_DIR']);
         AnnotationRegistry::registerFile($vendor_dir . "/doctrine/orm/lib/Doctrine/ORM/Mapping/Driver/DoctrineAnnotations.php");
         AnnotationRegistry::registerFile($vendor_dir . "/sensio/framework-extra-bundle/Sensio/Bundle/FrameworkExtraBundle/Configuration/Route.php");
         AnnotationRegistry::registerFile($vendor_dir . "/sensio/framework-extra-bundle/Sensio/Bundle/FrameworkExtraBundle/Configuration/Method.php");
@@ -43,8 +43,8 @@ class TermControllerTest extends WebTestCase
      */
     protected function tearDown()
     {
-//        $this->em->remove($this->vocabulary);
-//        $this->em->flush();
+       $this->em->remove($this->vocabulary);
+       $this->em->flush();
     }
 
     public function testCompleteScenario()
