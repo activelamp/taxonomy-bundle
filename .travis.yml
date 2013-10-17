@@ -13,6 +13,8 @@ env:
   - SYMFONY_VERSION=dev-master
 
 before_script:
+  - composer self-update
+  
   # Install symfony full stack and symlink the bundle.
   - composer -n create-project symfony/framework-standard-edition ../../symfony/ ${SYMFONY_VERSION}
   - ln -s src/* ../../symfony/src/
