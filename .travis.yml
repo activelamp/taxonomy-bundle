@@ -4,9 +4,28 @@ php:
   - 5.5
   - 5.4
 
+mysql:
+  database: symfony
+  username: root
+
 env:
-  - SYMFONY_VERSION=2.3.*
+  - SYMFONY_VERSION=2.3.6
   - SYMFONY_VERSION=dev-master
 
 before_script:
-  - composer require symfony/symfony:${SYMFONY_VERSION}
+  - WD=`pwd`
+  - cd ../..
+
+  # Install symfony full stack and symlink the bundle.
+  - composer -n create-project symfony/framework-standard-edition symfony/ ${SYMFONY_VERSION}
+  - ln -s $WD/activelamp/taxonomy-bundle/src/* symfony/src/
+
+  # Register the bundle and add routes.
+  - php $WD/activelamp/taxonomy-bundle/tests/setup_app.php
+
+  # Setup the database
+  - cd symfony
+  - php app/console doctrine:database:create
+  - php app/console doctrine:schema:create
+
+script: phpunit -c taxonomy-bundle

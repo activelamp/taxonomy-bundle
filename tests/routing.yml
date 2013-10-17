@@ -1,0 +1,7 @@
+al_taxonomy:
+    resource: "@ALTaxonomyBundle/Controller/TaxonomyController.php"
+    type:     annotation
+
+al_term:
+    resource: "@ALTaxonomyBundle/Controller/TermController.php"
+    type:     annotation

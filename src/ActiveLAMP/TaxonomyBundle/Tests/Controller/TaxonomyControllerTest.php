@@ -8,9 +8,11 @@ use Doctrine\Common\Annotations\AnnotationRegistry;
 class TaxonomyControllerTest extends WebTestCase
 {
     protected function setUp() {
-        AnnotationRegistry::registerFile(__DIR__ . "../../../../../../../../sensio/framework-extra-bundle/Sensio/Bundle/FrameworkExtraBundle/Configuration/Route.php");
-        AnnotationRegistry::registerFile(__DIR__ . "../../../../../../../../sensio/framework-extra-bundle/Sensio/Bundle/FrameworkExtraBundle/Configuration/Method.php");
-        AnnotationRegistry::registerFile(__DIR__ . "../../../../../../../../sensio/framework-extra-bundle/Sensio/Bundle/FrameworkExtraBundle/Configuration/Template.php");
+        $vendor_dir = realpath(__DIR__ . '/../../../../../../../symfony/vendor');
+        AnnotationRegistry::registerFile($vendor_dir . "/doctrine/orm/lib/Doctrine/ORM/Mapping/Driver/DoctrineAnnotations.php");
+        AnnotationRegistry::registerFile($vendor_dir . "/sensio/framework-extra-bundle/Sensio/Bundle/FrameworkExtraBundle/Configuration/Route.php");
+        AnnotationRegistry::registerFile($vendor_dir . "/sensio/framework-extra-bundle/Sensio/Bundle/FrameworkExtraBundle/Configuration/Method.php");
+        AnnotationRegistry::registerFile($vendor_dir . "/sensio/framework-extra-bundle/Sensio/Bundle/FrameworkExtraBundle/Configuration/Template.php");
     }
 
     public function testCompleteScenario()
