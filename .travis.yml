@@ -28,4 +28,4 @@ before_script:
   - php app/console doctrine:database:create
   - php app/console doctrine:schema:create
 
-script: phpunit -c taxonomy-bundle
+script: phpunit -c app --coverage-text
