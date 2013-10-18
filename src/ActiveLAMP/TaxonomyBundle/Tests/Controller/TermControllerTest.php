@@ -8,15 +8,14 @@ use Doctrine\Common\Annotations\AnnotationRegistry;
 
 class TermControllerTest extends WebTestCase
 {
-    protected $vocabulary;
-    protected $em;
+    protected $vocabulary_id;
 
     /**
      * Create a vocabulary to add terms to.
      */
     protected function setUp()
     {
-        $vendor_dir = realpath(__DIR__ . '/../../../../../../../symfony/vendor');
+        $vendor_dir = isset($_ENV['VENDOR_DIR']) ? realpath(__DIR__ . '/' . $_ENV['VENDOR_DIR']) : realpath(__DIR__ . '/../../../../../../../symfony/vendor');
         AnnotationRegistry::registerFile($vendor_dir . "/doctrine/orm/lib/Doctrine/ORM/Mapping/Driver/DoctrineAnnotations.php");
         AnnotationRegistry::registerFile($vendor_dir . "/sensio/framework-extra-bundle/Sensio/Bundle/FrameworkExtraBundle/Configuration/Route.php");
         AnnotationRegistry::registerFile($vendor_dir . "/sensio/framework-extra-bundle/Sensio/Bundle/FrameworkExtraBundle/Configuration/Method.php");
@@ -31,11 +30,12 @@ class TermControllerTest extends WebTestCase
         $entity->setName('testing_vocabulary');
         $entity->setDescription('Description for Vocabulary.' . $entity->getId());
 
-        $this->em = $kernel->getContainer()->get('doctrine.orm.entity_manager');
-        $this->em->persist($entity);
-        $this->em->flush();
+        $em = $kernel->getContainer()->get('doctrine.orm.entity_manager');
+        $em->persist($entity);
+        $em->flush();
+        $em->close();
 
-        $this->vocabulary = $entity;
+        $this->vocabulary_id = $entity->getId();
     }
 
     /**
@@ -43,8 +43,14 @@ class TermControllerTest extends WebTestCase
      */
     protected function tearDown()
     {
-//        $this->em->remove($this->vocabulary);
-//        $this->em->flush();
+        // Boot the kernel to get access to the container.
+        $kernel = static::createKernel();
+        $kernel->boot();
+        
+        $em = $kernel->getContainer()->get('doctrine.orm.entity_manager');
+        $vocab = $em->find('ActiveLAMP\TaxonomyBundle\Entity\Vocabulary', $this->vocabulary_id);
+        $em->remove($vocab);
+        $em->flush();
     }
 
     public function testCompleteScenario()
@@ -53,7 +59,7 @@ class TermControllerTest extends WebTestCase
         $client = static::createClient();
 
         // Create a new entry in the database
-        $crawler = $client->request('GET', '/admin/structure/taxonomy/' . $this->vocabulary->getId() . '/term/');
+        $crawler = $client->request('GET', '/admin/structure/taxonomy/' . $this->vocabulary_id . '/term/');
         $this->assertEquals(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
         $crawler = $client->click($crawler->selectLink('Add Term')->link());
 
