@@ -16,7 +16,7 @@ class TermType extends AbstractType
     {
         $builder
             ->add('name')
-            ->add('weight')
+            ->add('weight', 'integer')
         ;
     }
     
