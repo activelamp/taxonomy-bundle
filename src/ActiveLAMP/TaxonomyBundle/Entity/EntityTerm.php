@@ -43,7 +43,6 @@ class EntityTerm
      */
     protected $entityIdentifier;
 
-
     protected $entity;
 
     public function setEntity($entity)
@@ -55,6 +54,4 @@ class EntityTerm
     {
         return $this->entity;
     }
-
-
 }
