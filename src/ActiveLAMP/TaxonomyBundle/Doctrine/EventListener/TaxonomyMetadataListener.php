@@ -54,23 +54,36 @@ class TaxonomyMetadataListener implements EventSubscriber
         $reader = new AnnotationReader();
 
         $reflectionClass = $doctrineMetadata->getReflectionClass();
+        $this->readTaxonomyMetadata($reader, $reflectionClass, $reflectionClass);
 
+    }
+
+    /**
+     * @param \Doctrine\Common\Annotations\AnnotationReader $reader
+     * @param \ReflectionClass $reflectionClass
+     * @param \ReflectionClass $immediateReflectionClass
+     * @throws \DomainException
+     * @return null
+     */
+    protected function readTaxonomyMetadata(
+        AnnotationReader $reader,
+        \ReflectionClass $reflectionClass,
+        \ReflectionClass $immediateReflectionClass
+    ) {
         /* @var $entityMetadata Entity */
         $entityMetadata = $reader->getClassAnnotation($reflectionClass, 'ActiveLAMP\TaxonomyBundle\Annotations\Entity');
 
-        if (!$entityMetadata) {
-            return;
+        if (!$entityMetadata && !$reflectionClass->getParentClass()) {
+            return null;
+        } elseif ($reflectionClass->getParentClass()) {
+            return $this->readTaxonomyMetadata($reader, $reflectionClass->getParentClass(), $immediateReflectionClass);
         }
 
         $entity =
             new TaxMetadata\Entity($reflectionClass,
-                $entityMetadata->getType() ?: $reflectionClass->getName(), $entityMetadata->getIdentifier());
+                $entityMetadata->getType() ? : $immediateReflectionClass->getName(), $entityMetadata->getIdentifier());
 
-        foreach ($reflectionClass->getProperties() as $property) {
-
-            if ($property->getDeclaringClass()->getName() != $doctrineMetadata->getName()) {
-                continue;
-            }
+        foreach ($immediateReflectionClass->getProperties() as $property) {
 
             /* @var $vocab Vocabulary */
             $vocab = $reader->getPropertyAnnotation($property, 'ActiveLAMP\TaxonomyBundle\Annotations\Vocabulary');
@@ -84,11 +97,11 @@ class TaxonomyMetadataListener implements EventSubscriber
                             $property->getName()
                         ));
                 }
+                
                 $entity->addVocabulary($vocab);
             }
         }
 
         $this->metadata->addEntityMetadata($entity);
-
     }
 }
