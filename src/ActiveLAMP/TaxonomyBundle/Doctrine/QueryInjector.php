@@ -7,6 +7,7 @@
  */
 
 namespace ActiveLAMP\TaxonomyBundle\Doctrine;
+use ActiveLAMP\TaxonomyBundle\Metadata\Entity;
 use ActiveLAMP\TaxonomyBundle\Metadata\TaxonomyMetadata;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\QueryBuilder;
@@ -20,15 +21,37 @@ use Doctrine\ORM\QueryBuilder;
  */
 class QueryInjector 
 {
-    protected $metadata;
-
-    public function __construct(TaxonomyMetadata $metadata)
+    /**
+     * @param QueryBuilder $qb
+     * @param $terms
+     * @param null $entity
+     * @throws \InvalidArgumentException
+     */
+    public function queryEntityTermsByTerms(EntityManager $manager, $terms, $entity = null)
     {
-        $this->metadata = $metadata;
-    }
+        $qb->select('eterm.entityIdentifier');
+        $qb->innerJoin('eterm.tag', 'tag');
 
-    public function attachConditions(QueryBuilder $qb, $term)
-    {
+        if (is_array($terms)) {
+            $qb->andWhere($qb->expr()->in('tag.id', $terms));
+        } else {
+            $qb->andWhere('tag.id = :terms')->setParameter('terms', $terms);
+        }
+
+        $type = $entity;
+
+        if (is_object($type) && $type instanceof Entity) {
+            $type = $type->getType();
+        } else {
+            throw new \InvalidArgumentException(sprintf(
+                'Expected an instance of ActiveLAMP\TaxonomyBundle\Metadata\Entity or entity type string. "%s" given.',
+                get_class($type)
+            ));
+        }
+
+        if ($type) {
+            $qb->andWhere('eterm.entityType = :type')->setParameter('type', $type);
+        }
 
     }
 }

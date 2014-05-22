@@ -31,7 +31,7 @@ class EntityTerm
     /**
      * @ORM\ManyToOne(targetEntity="ActiveLAMP\TaxonomyBundle\Entity\Term", inversedBy="id")
      */
-    protected $tag;
+    protected $term;
 
     /**
      * @ORM\Column(name="entity_type", type="string", length=100)

@@ -7,6 +7,9 @@
  */
 
 namespace ActiveLAMP\TaxonomyBundle\Model;
+use ActiveLAMP\TaxonomyBundle\Doctrine\QueryInjector;
+use ActiveLAMP\TaxonomyBundle\Entity\EntityTerm;
+use ActiveLAMP\TaxonomyBundle\Entity\RelatedEntityCollection;
 use ActiveLAMP\TaxonomyBundle\Metadata\TaxonomyMetadata;
 use Doctrine\ORM\EntityManager;
 
@@ -27,6 +30,55 @@ class TaxonomyService
     {
         $this->em = $em;
         $this->metadata = $metadata;
+        $this->queryInjector = new QueryInjector();
+    }
+
+    /**
+     * @param EntityTerm $entityTerm
+     * @throws \LogicException
+     */
+    public function saveEntityTerm(EntityTerm $entityTerm)
+    {
+        $entity = $entityTerm->getEntity();
+
+        $metadata = $this->metadata->getEntityMetadata($entity);
+
+        if ($metadata == null) {
+            throw new \LogicException('Entity is not registered as a recognized entity in TaxonomyBundle.');
+        }
+
+        $identifierField = $metadata->getIdentifier();
+
+        $id = null;
+
+        /**
+         * If identifier field is accessible.
+         */
+        if (isset($entity->$identifierField)) {
+
+            $id = $entity->$identifierField;
+
+        } else {
+            /**
+             * When the identifier field is not accessible (private or protected), peek at the value via reflection.
+             */
+            $reflectionClass = $metadata->getReflectionClass();
+            $identifierProperty = $reflectionClass->getProperty($metadata->getIdentifier());
+            $identifierProperty->setAccessible(true);
+            $id = $identifierProperty->getValue($entity);
+            $identifierProperty->setAccessible(false);
+        }
+
+        if ($id == null) {
+            throw new \LogicException('The entity you wish to tag must be persisted first. Identifier cannot be null or false.');
+        }
+
+        $entityTerm->setEntityIdentifier($id)
+                   ->setEntityType($metadata->getType());
+
+        $this->em->persist($entityTerm);
+        $this->em->flush();
+
     }
 
     /**
@@ -34,9 +86,9 @@ class TaxonomyService
      * @param $terms
      * @param object|string|null $entity Entity object or entity identifier.
      * @throws \InvalidArgumentException
-     * @return array
+     * @return array|object
      */
-    public function findEntityTermsByTerms($terms, $entity = null)
+    public function findEntitiesByTerms($terms, $entity = null)
     {
 
         $metadata = null;
@@ -54,13 +106,12 @@ class TaxonomyService
 
         $qb = $this->em->getRepository('ALTaxonomyBundle:EntityTerm')->createQueryBuilder('eterm');
 
-        $qb->select('eterm.entityIdentifier');
-        $qb->innerJoin('eterm.tag', 'tag');
+        $qb->innerJoin('eterm.term', 'term');
 
         if (is_array($terms)) {
-            $qb->andWhere($qb->expr()->in('tag.id', $terms));
+            $qb->andWhere($qb->expr()->in('term.id', $terms));
         } else {
-            $qb->andWhere('tag.id = :terms')
+            $qb->andWhere('term.id = :terms')
                ->setParameter('terms', $terms);
         }
 
@@ -69,6 +120,6 @@ class TaxonomyService
                ->setParameter('type', $metadata->getType());
         }
 
-        return $qb->getQuery()->getResult();
+        return RelatedEntityCollection::create($qb->getQuery()->getResult());
     }
 }
