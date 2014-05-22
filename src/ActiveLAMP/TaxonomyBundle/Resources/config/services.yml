@@ -2,6 +2,12 @@ parameters:
 #    al_taxonomy.example.class: ActiveLAMP\TaxonomyBundle\Example
 
 services:
-#    al_taxonomy.example:
-#        class: %al_taxonomy.example.class%
-#        arguments: [@service_id, "plain_value", %parameter%]
+    al_taxonomy.metadata:
+        class: ActiveLAMP\TaxonomyBundle\Metadata\TaxonomyMetadata
+
+    al_taxonomy.doctrine.metadata_listener:
+        class: ActiveLAMP\TaxonomyBundle\Doctrine\EventListener\TaxonomyMetadataListener
+        arguments:
+            - @al_taxonomy.metadata
+        tags:
+            - { name: doctrine.event_subscriber }
