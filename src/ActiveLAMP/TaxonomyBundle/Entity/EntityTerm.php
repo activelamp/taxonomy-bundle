@@ -43,13 +43,61 @@ class EntityTerm
      */
     protected $entityIdentifier;
 
+    /**
+     * @var mixed
+     */
     protected $entity;
 
+
+    /**
+     * @param $type
+     * @return $this
+     */
+    public function setEntityType($type)
+    {
+        $this->entityType = $type;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getEntityType()
+    {
+        return $this->entityType;
+    }
+
+    /**
+     * @param $id
+     * @return $this
+     */
+    public function setEntityIdentifier($id)
+    {
+        $this->entityIdentifier = $id;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getEntityIdentifier()
+    {
+        return $this->entityIdentifier;
+    }
+
+    /**
+     * @param $entity
+     * @return $this
+     */
     public function setEntity($entity)
     {
         $this->entity = $entity;
+        return $this;
     }
 
+    /**
+     * @return mixed
+     */
     public function getEntity()
     {
         return $this->entity;
