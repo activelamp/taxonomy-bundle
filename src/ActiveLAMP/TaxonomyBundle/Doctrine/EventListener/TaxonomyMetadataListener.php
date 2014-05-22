@@ -7,6 +7,7 @@
  */
 
 namespace ActiveLAMP\TaxonomyBundle\Doctrine\EventListener;
+use ActiveLAMP\TaxonomyBundle\Annotations\Entity;
 use ActiveLAMP\TaxonomyBundle\Annotations\Vocabulary;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\EventSubscriber;
@@ -54,13 +55,16 @@ class TaxonomyMetadataListener implements EventSubscriber
 
         $reflectionClass = $doctrineMetadata->getReflectionClass();
 
+        /* @var $entityMetadata Entity */
         $entityMetadata = $reader->getClassAnnotation($reflectionClass, 'ActiveLAMP\TaxonomyBundle\Annotations\Entity');
 
         if (!$entityMetadata) {
             return;
         }
 
-        $entity = new TaxMetadata\Entity($reflectionClass, $entityMetadata->type, $entityMetadata->identifier);
+        $entity =
+            new TaxMetadata\Entity($reflectionClass,
+                $entityMetadata->getType() ?: $reflectionClass->getName(), $entityMetadata->getIdentifier());
 
         foreach ($reflectionClass->getProperties() as $property) {
 

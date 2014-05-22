@@ -18,7 +18,17 @@ namespace ActiveLAMP\TaxonomyBundle\Annotations;
  */
 class Entity 
 {
-    public $type;
+    public $type = null;
 
-    public $identifier;
+    public $identifier = 'id';
+
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    public function getIdentifier()
+    {
+        return $this->identifier;
+    }
 }
