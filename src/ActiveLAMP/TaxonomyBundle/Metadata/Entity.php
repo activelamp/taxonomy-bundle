@@ -88,6 +88,10 @@ class Entity
      */
     public function extractIdentifier($entity)
     {
+        if (isset($entity->{$this->getIdentifier()})) {
+            return $entity->{$this->getIdentifier()};
+        }
+
         $refClass = $this->reflectionClass;
 
         if (!$refClass->isInstance($entity)) {

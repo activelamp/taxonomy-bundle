@@ -47,23 +47,7 @@ class TaxonomyService
             throw new \LogicException('Entity is not registered as a recognized entity in TaxonomyBundle.');
         }
 
-        $identifierField = $metadata->getIdentifier();
-
-        $id = null;
-
-        /**
-         * If identifier field is accessible.
-         */
-        if (isset($entity->$identifierField)) {
-
-            $id = $entity->$identifierField;
-
-        } else {
-            /**
-             * When the identifier field is not accessible (private or protected), peek at the value via reflection.
-             */
-            $id = $metadata->extractIdentifier($entity);
-        }
+        $id = $metadata->extractIdentifier($entity);
 
         if ($id == null) {
             throw new \LogicException('The entity you wish to tag must be persisted first. Identifier cannot be null or false.');
