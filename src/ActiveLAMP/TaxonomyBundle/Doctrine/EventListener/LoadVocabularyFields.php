@@ -7,12 +7,14 @@
  */
 
 namespace ActiveLAMP\TaxonomyBundle\Doctrine\EventListener;
+use ActiveLAMP\TaxonomyBundle\Entity\TermsLazyLoadCollection;
 use ActiveLAMP\TaxonomyBundle\Entity\Vocabulary;
 use ActiveLAMP\TaxonomyBundle\Entity\VocabularyField;
 use ActiveLAMP\TaxonomyBundle\Metadata\TaxonomyMetadata;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Events;
+use Doctrine\ORM\PersistentCollection;
 
 
 /**
@@ -59,26 +61,31 @@ class LoadVocabularyFields implements EventSubscriber
             return;
         }
 
-        foreach ($metadata->getVocabularies() as $vocabularyMetdata) {
+        foreach ($metadata->getVocabularies() as $vocabularyMetadata) {
 
-            $reflectionProperty = $vocabularyMetdata->getReflectionProperty();
+            $reflectionProperty = $vocabularyMetadata->getReflectionProperty();
             /** @var $vocabulary Vocabulary */
             $vocabulary = $eventArgs->getEntityManager()
                                     ->getRepository('ALTaxonomyBundle:Vocabulary')
-                                    ->findOneBy(array('name' => $vocabularyMetdata->getName()));
+                                    ->findOneBy(array('name' => $vocabularyMetadata->getName()));
 
             if (!$vocabulary) {
                 throw new \RuntimeException(
                     sprintf(
                         'Cannot find "%s" vocabulary. Cannot link to %s::%s',
-                        $vocabularyMetdata->getName(),
+                        $vocabularyMetadata->getName(),
                         $metadata->getReflectionClass()->getName(),
                         $reflectionProperty->getName()
                     ));
             }
 
-            $vocabularyField = new VocabularyField($vocabulary);
+            $terms =
+                new TermsLazyLoadCollection(
+                    $eventArgs->getEntityManager(),
+                    $metadata,
+                    $metadata->extractIdentifier($entity));
 
+            $vocabularyField = new VocabularyField($vocabulary, $terms);
             $reflectionProperty->setAccessible(true);
             $reflectionProperty->setValue($entity, $vocabularyField);
             $reflectionProperty->setAccessible(false);

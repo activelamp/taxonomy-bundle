@@ -9,7 +9,8 @@
 namespace ActiveLAMP\TaxonomyBundle\Model;
 use ActiveLAMP\TaxonomyBundle\Doctrine\QueryInjector;
 use ActiveLAMP\TaxonomyBundle\Entity\EntityTerm;
-use ActiveLAMP\TaxonomyBundle\Entity\RelatedEntityCollection;
+use ActiveLAMP\TaxonomyBundle\Entity\Collection\RelatedEntityCollection;
+use ActiveLAMP\TaxonomyBundle\Metadata\Entity;
 use ActiveLAMP\TaxonomyBundle\Metadata\TaxonomyMetadata;
 use Doctrine\ORM\EntityManager;
 
@@ -62,11 +63,7 @@ class TaxonomyService
             /**
              * When the identifier field is not accessible (private or protected), peek at the value via reflection.
              */
-            $reflectionClass = $metadata->getReflectionClass();
-            $identifierProperty = $reflectionClass->getProperty($metadata->getIdentifier());
-            $identifierProperty->setAccessible(true);
-            $id = $identifierProperty->getValue($entity);
-            $identifierProperty->setAccessible(false);
+            $id = $metadata->extractIdentifier($entity);
         }
 
         if ($id == null) {

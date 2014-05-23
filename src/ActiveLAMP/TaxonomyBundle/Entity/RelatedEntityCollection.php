@@ -8,6 +8,7 @@
 
 namespace ActiveLAMP\TaxonomyBundle\Entity;
 
+
 /**
  * Class RelatedEntityCollection
  *

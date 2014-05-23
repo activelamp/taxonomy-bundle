@@ -80,4 +80,28 @@ class Entity
     {
         return $this->vocabularies;
     }
+
+    /**
+     * @param $entity
+     * @return mixed
+     * @throws \InvalidArgumentException
+     */
+    public function extractIdentifier($entity)
+    {
+        $refClass = $this->reflectionClass;
+
+        if (!$refClass->isInstance($entity)) {
+            throw new \InvalidArgumentException(sprintf(
+                'Expected instance of "%s". "%s" given.',
+                $refClass->getName(),
+                get_class($entity)
+            ));
+        }
+        $identifierProperty = $refClass->getProperty($this->getIdentifier());
+        $identifierProperty->setAccessible(true);
+        $id = $identifierProperty->getValue($entity);
+        $identifierProperty->setAccessible(false);
+
+        return $id;
+    }
 }
