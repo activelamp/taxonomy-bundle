@@ -102,4 +102,9 @@ class EntityTerm
     {
         return $this->entity;
     }
+
+    public function getTerm()
+    {
+        return $this->term;
+    }
 }

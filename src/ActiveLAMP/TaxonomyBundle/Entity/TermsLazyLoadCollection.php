@@ -74,13 +74,13 @@ class TermsLazyLoadCollection implements \IteratorAggregate
         $type = $this->entityMetadata->getType();
 
         $items =
-            $this->em->getRepository($this->entityMetadata->getReflectionClass()->getName())
+            $this->em->getRepository('ALTaxonomyBundle:EntityTerm')
                 ->findBy(array(
                     'entityType' => $type,
                     'entityIdentifier' => $this->identifier
                 ));
 
-        $this->terms = $items;
+        $this->terms = new RelatedTermCollection($items);
 
         $this->loaded = true;
     }

@@ -2,51 +2,33 @@
 /**
  * Created by PhpStorm.
  * User: bezalelhermoso
- * Date: 5/22/14
- * Time: 2:31 PM
+ * Date: 5/23/14
+ * Time: 9:31 AM
  */
 
 namespace ActiveLAMP\TaxonomyBundle\Entity;
 
 
 /**
- * Class RelatedEntityCollection
+ * Class RelatedTermCollection
  *
  * @package ActiveLAMP\TaxonomyBundle\Entity
  * @author Bez Hermoso <bez@activelamp.com>
  */
-class RelatedEntityCollection extends \ArrayIterator
+class RelatedTermCollection extends \ArrayIterator
 {
-    protected $items;
 
-    /**
-     * An array|iterator of EntityTerm instances.
-     *
-     * @param $entityTerms
-     * @throws \InvalidArgumentException
-     */
     public function __construct(array $entityTerms)
     {
         parent::__construct($entityTerms);
     }
 
-
-    /**
-     *
-     * Returns the entity term.
-     *
-     * (PHP 5 &gt;= 5.0.0)<br/>
-     * Return the current element
-     * @link http://php.net/manual/en/iterator.current.php
-     * @throws \RuntimeException
-     * @return mixed Can return any type.
-     */
     public function current()
     {
         $entityTerm = parent::current();
 
         if ($entityTerm instanceof EntityTerm) {
-            return $entityTerm->getEntity();
+            return $entityTerm->getTerm();
         } else {
             throw new \RuntimeException('Collection must only contain instances of ActiveLAMP\TaxonomyBundle\Entity\EntityTerm.');
         }
@@ -72,4 +54,4 @@ class RelatedEntityCollection extends \ArrayIterator
                 ));
         }
     }
-}
+} 
