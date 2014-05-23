@@ -2,6 +2,7 @@
 
 namespace ActiveLAMP\TaxonomyBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -43,10 +44,14 @@ class Vocabulary
     private $description;
 
     /**
-     * @var array
+     * @ORM\OneToMany(targetEntity="ActiveLAMP\TaxonomyBundle\Entity\Vocabulary", mappedBy="id")
      */
     private $terms;
 
+    public function __construct()
+    {
+        $this->terms = new ArrayCollection();
+    }
 
     /**
      * Get id

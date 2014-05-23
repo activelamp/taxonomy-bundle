@@ -17,13 +17,13 @@ use ActiveLAMP\TaxonomyBundle\Metadata as TaxMetadata;
 
 
 /**
- * Class TaxonomyMetadataListener
+ * Class TaxonomyMetadataSubscriber
  *
  * @package ActiveLAMP\TaxonomyBundle\Doctrine\EventListener
  * @author Bez Hermoso <bez@activelamp.com>
  */
 
-class TaxonomyMetadataListener implements EventSubscriber
+class TaxonomyMetadataSubscriber implements EventSubscriber
 {
     /**
      * @var \ActiveLAMP\TaxonomyBundle\Metadata\TaxonomyMetadata
@@ -54,7 +54,10 @@ class TaxonomyMetadataListener implements EventSubscriber
         $reader = new AnnotationReader();
 
         $reflectionClass = $doctrineMetadata->getReflectionClass();
-        $this->readTaxonomyMetadata($reader, $reflectionClass, $reflectionClass);
+
+        if ($reflectionClass) {
+            $this->readTaxonomyMetadata($reader, $reflectionClass, $reflectionClass);
+        }
 
     }
 
@@ -79,8 +82,9 @@ class TaxonomyMetadataListener implements EventSubscriber
             return $this->readTaxonomyMetadata($reader, $reflectionClass->getParentClass(), $immediateReflectionClass);
         }
 
+
         $entity =
-            new TaxMetadata\Entity($reflectionClass,
+            new TaxMetadata\Entity($immediateReflectionClass,
                 $entityMetadata->getType() ? : $immediateReflectionClass->getName(), $entityMetadata->getIdentifier());
 
         foreach ($immediateReflectionClass->getProperties() as $property) {
@@ -97,8 +101,9 @@ class TaxonomyMetadataListener implements EventSubscriber
                             $property->getName()
                         ));
                 }
-                
-                $entity->addVocabulary($vocab);
+
+                $vocabulary = new TaxMetadata\Vocabulary($property, $vocab->getName());
+                $entity->addVocabulary($vocabulary);
             }
         }
 

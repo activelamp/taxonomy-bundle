@@ -10,7 +10,7 @@ namespace ActiveLAMP\TaxonomyBundle\Metadata;
 
 
 /**
- * Class TaxonomyMetadataListener
+ * Class TaxonomyMetadataSubscriber
  *
  * @package ActiveLAMP\TaxonomyBundle\Metadata
  * @author Bez Hermoso <bez@activelamp.com>
@@ -27,6 +27,8 @@ class TaxonomyMetadata
         if ($this->getEntityMetadata($entity->getReflectionClass()->getName())) {
             throw new \RuntimeException("Duplicate metadata entity.");
         }
+
+        $this->entityMetadata[] = $entity;
     }
 
     /**
@@ -49,5 +51,10 @@ class TaxonomyMetadata
         }
 
         return null;
+    }
+
+    public function getAllEntityMetadata()
+    {
+        return $this->entityMetadata;
     }
 }

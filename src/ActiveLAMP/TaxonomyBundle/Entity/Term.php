@@ -2,6 +2,7 @@
 
 namespace ActiveLAMP\TaxonomyBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -41,6 +42,17 @@ class Term
      */
     private $weight;
 
+    /**
+     * @var array|EntityTerm[]
+     * @ORM\OneToMany(targetEntity="ActiveLAMP\TaxonomyBundle\Entity\EntityTerm", mappedBy="term")
+     */
+    protected $entityTerms;
+
+
+    public function __construct()
+    {
+        $this->entityTerms = new ArrayCollection();
+    }
 
     /**
      * Get id

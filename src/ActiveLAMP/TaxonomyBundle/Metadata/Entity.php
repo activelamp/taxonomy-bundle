@@ -63,10 +63,21 @@ class Entity
         return $this->type;
     }
 
-    public function addVocabulary($vocabulary)
+    /**
+     * @param Vocabulary $vocabulary
+     */
+    public function addVocabulary(Vocabulary $vocabulary)
     {
-        if (false !== array_search($vocabulary, $this->vocabularies)) {
+        if (false === array_search($vocabulary, $this->vocabularies)) {
             $this->vocabularies[] = $vocabulary;
         }
+    }
+
+    /**
+     * @return array|Vocabulary[]
+     */
+    public function getVocabularies()
+    {
+        return $this->vocabularies;
     }
 }
