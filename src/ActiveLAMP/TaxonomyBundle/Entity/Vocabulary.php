@@ -67,7 +67,7 @@ class Vocabulary
      * Set labelName
      *
      * @param string $labelName
-     * @return List
+     * @return $this
      */
     public function setLabelName($labelName)
     {
@@ -90,7 +90,7 @@ class Vocabulary
      * Set name
      *
      * @param string $name
-     * @return List
+     * @return $this
      */
     public function setName($name)
     {
@@ -113,7 +113,7 @@ class Vocabulary
      * Set description
      *
      * @param string $description
-     * @return List
+     * @return $this
      */
     public function setDescription($description)
     {
