@@ -54,4 +54,5 @@ class RelatedTermCollection extends \ArrayIterator
                 ));
         }
     }
+
 } 

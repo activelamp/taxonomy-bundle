@@ -107,4 +107,11 @@ class EntityTerm
     {
         return $this->term;
     }
+
+    public function setTerm(Term $term)
+    {
+        $this->term = $term;
+
+        return $this;
+    }
 }

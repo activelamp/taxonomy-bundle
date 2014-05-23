@@ -41,9 +41,17 @@ class TermsLazyLoadCollection implements \IteratorAggregate
     protected $identifier;
 
     /**
-     * @var array|Term[]
+     * @var RelatedTermCollection|Term[]
      */
-    protected $terms = array();
+    protected $terms;
+
+    protected $new = array();
+
+    protected $toRemove = array();
+
+    protected $entity;
+
+    protected $snapshot;
 
     public function __construct(EntityManager $em, Entity $entityMetadata, $identifier)
     {
@@ -65,11 +73,14 @@ class TermsLazyLoadCollection implements \IteratorAggregate
             $this->load();
         }
 
-        return new \ArrayIterator($this->terms);
+        return $this->terms;
     }
 
     protected function load()
     {
+        if ($this->loaded) {
+            return;
+        }
 
         $type = $this->entityMetadata->getType();
 
@@ -79,6 +90,8 @@ class TermsLazyLoadCollection implements \IteratorAggregate
                     'entityType' => $type,
                     'entityIdentifier' => $this->identifier
                 ));
+
+        $this->snapshot = $items;
 
         $this->terms = new RelatedTermCollection($items);
 

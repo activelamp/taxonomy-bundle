@@ -7,6 +7,7 @@
  */
 
 namespace ActiveLAMP\TaxonomyBundle\Entity;
+use Doctrine\Common\Collections\ArrayCollection;
 use Traversable;
 
 
@@ -47,7 +48,7 @@ class VocabularyField implements \IteratorAggregate
     {
         if (is_array($this->terms)) {
 
-            return new \ArrayIterator($this->terms);
+            return new ArrayCollection($this->terms);
 
         } elseif ($this->terms instanceof \Iterator) {
 
