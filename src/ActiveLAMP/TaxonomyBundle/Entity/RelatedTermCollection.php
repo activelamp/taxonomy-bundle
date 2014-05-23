@@ -7,6 +7,9 @@
  */
 
 namespace ActiveLAMP\TaxonomyBundle\Entity;
+use ActiveLAMP\TaxonomyBundle\Iterator\AbstractInnerMemberIterator;
+use ActiveLAMP\TaxonomyBundle\Iterator\InnerTermIterator;
+use Traversable;
 
 
 /**
@@ -15,23 +18,26 @@ namespace ActiveLAMP\TaxonomyBundle\Entity;
  * @package ActiveLAMP\TaxonomyBundle\Entity
  * @author Bez Hermoso <bez@activelamp.com>
  */
-class RelatedTermCollection extends \ArrayIterator
+class RelatedTermCollection implements \IteratorAggregate
 {
+
+    protected $entityTerms;
 
     public function __construct(array $entityTerms)
     {
-        parent::__construct($entityTerms);
+        $this->entityTerms = $entityTerms;
     }
 
-    public function current()
+    /**
+     * (PHP 5 &gt;= 5.0.0)<br/>
+     * Retrieve an external iterator
+     * @link http://php.net/manual/en/iteratoraggregate.getiterator.php
+     * @return Traversable An instance of an object implementing <b>Iterator</b> or
+     * <b>Traversable</b>
+     */
+    public function getIterator()
     {
-        $entityTerm = parent::current();
-
-        if ($entityTerm instanceof EntityTerm) {
-            return $entityTerm->getTerm();
-        } else {
-            throw new \RuntimeException('Collection must only contain instances of ActiveLAMP\TaxonomyBundle\Entity\EntityTerm.');
-        }
+        return new InnerTermIterator(new \ArrayIterator($this->entityTerms));
     }
 
     /**
@@ -54,5 +60,4 @@ class RelatedTermCollection extends \ArrayIterator
                 ));
         }
     }
-
-} 
+}

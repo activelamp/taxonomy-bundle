@@ -9,8 +9,7 @@
 namespace ActiveLAMP\TaxonomyBundle\Model;
 use ActiveLAMP\TaxonomyBundle\Doctrine\QueryInjector;
 use ActiveLAMP\TaxonomyBundle\Entity\EntityTerm;
-use ActiveLAMP\TaxonomyBundle\Entity\Collection\RelatedEntityCollection;
-use ActiveLAMP\TaxonomyBundle\Metadata\Entity;
+use ActiveLAMP\TaxonomyBundle\Entity\RelatedEntityCollection;
 use ActiveLAMP\TaxonomyBundle\Metadata\TaxonomyMetadata;
 use Doctrine\ORM\EntityManager;
 
