@@ -29,7 +29,7 @@ class EntityTerm
     protected $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="ActiveLAMP\TaxonomyBundle\Entity\Term", inversedBy="id")
+     * @ORM\ManyToOne(targetEntity="ActiveLAMP\TaxonomyBundle\Entity\Term", inversedBy="entityTerms")
      */
     protected $term;
 

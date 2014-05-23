@@ -44,7 +44,7 @@ class Vocabulary
     private $description;
 
     /**
-     * @ORM\OneToMany(targetEntity="ActiveLAMP\TaxonomyBundle\Entity\Vocabulary", mappedBy="id")
+     * @ORM\OneToMany(targetEntity="ActiveLAMP\TaxonomyBundle\Entity\Term", mappedBy="vocabulary")
      */
     private $terms;
 
