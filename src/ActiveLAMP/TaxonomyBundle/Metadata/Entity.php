@@ -7,6 +7,7 @@
  */
 
 namespace ActiveLAMP\TaxonomyBundle\Metadata;
+use ActiveLAMP\TaxonomyBundle\Entity\VocabularyField;
 
 
 /**
@@ -33,7 +34,7 @@ class Entity
     protected $identifier;
 
     /**
-     * @var array
+     * @var array|Vocabulary[]
      */
     protected $vocabularies = array();
 
@@ -107,5 +108,18 @@ class Entity
         $identifierProperty->setAccessible(false);
 
         return $id;
+    }
+
+    /**
+     * @param $entity
+     * @return array|VocabularyField[]
+     */
+    public function extractVocabularyFields($entity)
+    {
+        $fields = array();
+        foreach ($this->vocabularies as $vocabulary) {
+            $fields[] = $vocabulary->extractVocabularyField($entity);
+        }
+        return $fields;
     }
 }

@@ -7,6 +7,7 @@
  */
 
 namespace ActiveLAMP\TaxonomyBundle\Metadata;
+use ActiveLAMP\TaxonomyBundle\Entity\VocabularyField;
 
 
 /**
@@ -50,5 +51,18 @@ class Vocabulary
     public function getReflectionProperty()
     {
         return $this->field;
+    }
+
+    /**
+     * @param $entity
+     * @return VocabularyField
+     */
+    public function extractVocabularyField($entity)
+    {
+        $this->field->setAccessible(true);
+        $field = $this->field->getValue($entity);
+        $this->field->setAccessible(false);
+
+        return $field;
     }
 } 

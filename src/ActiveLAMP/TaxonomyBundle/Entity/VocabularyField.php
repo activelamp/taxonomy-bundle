@@ -26,7 +26,7 @@ class VocabularyField implements \IteratorAggregate
 
     protected $vocabulary;
 
-    public function __construct(Vocabulary $vocabulary, $terms)
+    public function __construct(Vocabulary $vocabulary, TermsLazyLoadCollection $terms)
     {
         $this->vocabulary = $vocabulary;
         $this->terms = $terms;
@@ -46,18 +46,27 @@ class VocabularyField implements \IteratorAggregate
      */
     public function getIterator()
     {
-        if (is_array($this->terms)) {
-
-            return new ArrayCollection($this->terms);
-
-        } elseif ($this->terms instanceof \Iterator) {
-
-            return $this->terms;
-
-        } elseif ($this->terms instanceof \IteratorAggregate) {
-
-            return $this->terms->getIterator();
-
-        }
+        return $this->terms->getIterator();
     }
+
+    public function add(Term $term)
+    {
+        $this->terms->addTerm($term);
+    }
+
+    public function remove(Term $term)
+    {
+        $this->terms->removeTerm($term);
+    }
+
+    public function getInsertDiff()
+    {
+        return $this->terms->getInsertDiff();
+    }
+
+    public function getDeleteDiff()
+    {
+        return $this->terms->getDeleteDiff();
+    }
+
 }

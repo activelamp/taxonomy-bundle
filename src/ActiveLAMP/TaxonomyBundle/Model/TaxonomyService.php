@@ -10,6 +10,7 @@ namespace ActiveLAMP\TaxonomyBundle\Model;
 use ActiveLAMP\TaxonomyBundle\Doctrine\QueryInjector;
 use ActiveLAMP\TaxonomyBundle\Entity\EntityTerm;
 use ActiveLAMP\TaxonomyBundle\Entity\RelatedEntityCollection;
+use ActiveLAMP\TaxonomyBundle\Entity\Vocabulary;
 use ActiveLAMP\TaxonomyBundle\Metadata\TaxonomyMetadata;
 use Doctrine\ORM\EntityManager;
 
@@ -37,7 +38,7 @@ class TaxonomyService
      * @param EntityTerm $entityTerm
      * @throws \LogicException
      */
-    public function saveEntityTerm(EntityTerm $entityTerm)
+    public function saveEntityTerm(EntityTerm $entityTerm, $flush = true)
     {
         $entity = $entityTerm->getEntity();
 
@@ -57,8 +58,37 @@ class TaxonomyService
                    ->setEntityType($metadata->getType());
 
         $this->em->persist($entityTerm);
-        $this->em->flush();
 
+        if ($flush === true) {
+            $this->em->flush();
+        }
+
+    }
+
+    /**
+     * @param $name
+     * @return Vocabulary
+     */
+    public function findVocabulary($name)
+    {
+        return $this->em->getRepository('ALTaxonomyBundle:Vocabulary')->findOneBy(array(
+            'name' => $name
+        ));
+    }
+
+    /**
+     * @param $vocabulary
+     * @return \ActiveLAMP\TaxonomyBundle\Entity\Term[]|array
+     */
+    public function findTermsInVocabulary($vocabulary)
+    {
+        if (is_string($vocabulary)) {
+            $vocabulary = $this->findVocabulary($vocabulary);
+        }
+
+        return $this->em->getRepository('ALTaxonomyBundle:Term')->findBy(array(
+            'vocabulary' => $vocabulary
+        ));
     }
 
     /**
@@ -101,5 +131,38 @@ class TaxonomyService
         }
 
         return RelatedEntityCollection::create($qb->getQuery()->getResult());
+    }
+
+    public function saveTaxonomies($entity, $persist = true)
+    {
+        $metadata = $this->metadata->getEntityMetadata($entity);
+
+        $fields = $metadata->extractVocabularyFields($entity);
+
+        $mods = 0;
+
+        foreach ($fields as $field) {
+
+            $inserts = $field->getInsertDiff();
+            $deletes = $field->getDeleteDiff();
+
+            /** @var $eTerm EntityTerm */
+            foreach ($inserts as $eTerm) {
+                $eTerm->setEntity($entity);
+                $this->saveEntityTerm($eTerm, false);
+                $mods++;
+            }
+
+
+            foreach ($deletes as $eTerm) {
+                $this->em->remove($eTerm);
+                $mods++;
+            }
+        }
+
+        if ($mods > 0 && $persist) {
+            $this->em->flush();
+        }
+
     }
 }

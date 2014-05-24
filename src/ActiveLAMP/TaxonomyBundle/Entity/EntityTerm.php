@@ -17,7 +17,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @author Bez Hermoso <bez@activelamp.com>
  *
  * @ORM\Entity
- * @ORM\Table(name="entity_tag")
+ * @ORM\Table(name="taxonomy_entity_term")
  */
 class EntityTerm
 {

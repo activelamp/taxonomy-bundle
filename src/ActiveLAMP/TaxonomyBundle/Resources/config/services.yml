@@ -2,6 +2,13 @@ parameters:
 #    al_taxonomy.example.class: ActiveLAMP\TaxonomyBundle\Example
 
 services:
+
+    al_taxonomy.taxonomy_service:
+        class: ActiveLAMP\TaxonomyBundle\Model\TaxonomyService
+        arguments:
+            - @doctrine.orm.entity_manager
+            - @al_taxonomy.metadata
+
     al_taxonomy.metadata:
         class: ActiveLAMP\TaxonomyBundle\Metadata\TaxonomyMetadata
 
