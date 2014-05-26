@@ -79,13 +79,14 @@ class LoadVocabularyFields implements EventSubscriber
                     ));
             }
 
-            $terms =
-                new TermsLazyLoadCollection(
+
+            $vocabularyField =
+                new VocabularyField(
+                    $vocabulary,
                     $eventArgs->getEntityManager(),
                     $metadata,
                     $metadata->extractIdentifier($entity));
-
-            $vocabularyField = new VocabularyField($vocabulary, $terms);
+            
             $reflectionProperty->setAccessible(true);
             $reflectionProperty->setValue($entity, $vocabularyField);
             $reflectionProperty->setAccessible(false);

@@ -9,6 +9,9 @@
 namespace ActiveLAMP\TaxonomyBundle\Entity;
 use ActiveLAMP\TaxonomyBundle\Iterator\InnerTermIterator;
 use ActiveLAMP\TaxonomyBundle\Metadata\Entity;
+use Closure;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManager;
 use Traversable;
 
@@ -19,7 +22,7 @@ use Traversable;
  * @package ActiveLAMP\TaxonomyBundle\Entity
  * @author Bez Hermoso <bez@activelamp.com>
  */
-class TermsLazyLoadCollection implements \IteratorAggregate
+class TermsLazyLoadCollection implements Collection
 {
     /**
      * @var \Doctrine\ORM\EntityManager
@@ -34,115 +37,57 @@ class TermsLazyLoadCollection implements \IteratorAggregate
     /**
      * @var bool
      */
-    protected $loaded = false;
+    protected $initialized = false;
 
     /**
      * @var mixed
      */
     protected $identifier;
 
-    protected $entityTerms;
-
-    protected $new = array();
-
-    protected $toRemove = array();
-
     protected $entity;
 
-    protected $snapshot;
+    protected $vocabulary;
 
-    public function __construct(EntityManager $em, Entity $entityMetadata, $identifier)
+    /**
+     * @var ArrayCollection
+     */
+    protected $collection;
+
+    /**
+     * @param EntityManager $em
+     * @param Entity $entityMetadata
+     * @param $identifier
+     * @param $vocabulary
+     */
+    public function __construct(EntityManager $em, Entity $entityMetadata, $identifier, $vocabulary)
     {
         $this->em = $em;
         $this->entityMetadata = $entityMetadata;
         $this->identifier = $identifier;
+        $this->vocabulary = $vocabulary;
     }
 
-    /**
-     *
-     * (PHP 5 &gt;= 5.0.0)<br/>
-     * Retrieve an external iterator
-     * @link http://php.net/manual/en/iteratoraggregate.getiterator.php
-     * @return Traversable|Term[] An instance of an object implementing <b>Iterator</b> or
-     * <b>Traversable</b>
-     */
-    public function getIterator()
+    private function initialize()
     {
-        if ($this->loaded == false) {
-            $this->load();
-        }
-        return new InnerTermIterator(new \ArrayIterator($this->entityTerms));
-    }
-
-    protected function load()
-    {
-        if ($this->loaded) {
+        if ($this->initialized) {
             return;
         }
 
-        $type = $this->entityMetadata->getType();
+        $terms =
+            $this->em->getRepository('ALTaxonomyBundle:Term')
+                 ->createQueryBuilder('t')
+                 ->innerJoin('t.entityTerms', 'et')
+                 ->innerJoin('t.vocabulary', 'v')
+                 ->andWhere('et.entityIdentifier = :id')
+                 ->andWhere('et.entityType = :type')
+                 ->andWhere('v.id = :vid')
+                 ->setParameters(array(
+                    'id' => $this->identifier,
+                    'type' => $this->entityMetadata->getType(),
+                    'vid' => $this->vocabulary,
+                 ))->getQuery()->getResult();
 
-        $items =
-            $this->em->getRepository('ALTaxonomyBundle:EntityTerm')
-                ->findBy(array(
-                    'entityType' => $type,
-                    'entityIdentifier' => $this->identifier
-                ));
-
-        $this->snapshot = $items;
-
-        $this->entityTerms = $items;
-
-        $this->loaded = true;
-    }
-
-    public function removeTerm(Term $term)
-    {
-        $this->load();
-
-        $haystack = iterator_to_array($this->getIterator());
-
-        $i = array_search($term, $haystack, true);
-
-        if ($i !== false) {
-            unset($this->entityTerms[$i]);
-        }
-    }
-
-    public function addTerm(Term $term)
-    {
-        $this->load();
-
-        $haystack = iterator_to_array($this->getIterator());
-
-        $i = array_search($term, $haystack, true);
-
-        if ($i === false) {
-            $e = new EntityTerm();
-            $e->setTerm($term);
-            $this->entityTerms[] = $e;
-        }
-    }
-
-    public function getInsertDiff()
-    {
-        return array_udiff_assoc(
-            $this->entityTerms,
-            $this->snapshot,
-            function ($x, $y) {
-                return $x === $y ? 0 : 1;
-            }
-        );
-    }
-
-    public function getDeleteDiff()
-    {
-        return array_udiff_assoc(
-            $this->snapshot,
-            $this->entityTerms,
-            function ($x, $y) {
-                return $x === $y ? 0 : 1;
-            }
-        );
+        $this->collection = new ArrayCollection($terms);
+        $this->initialized = true;
     }
 }
