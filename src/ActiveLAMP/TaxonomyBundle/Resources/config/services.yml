@@ -29,6 +29,6 @@ services:
     al_taxonomy.doctrine.subscriber.vocabulary_fields_loader:
         class: ActiveLAMP\TaxonomyBundle\Doctrine\EventListener\LoadVocabularyFields
         arguments:
-            - @al_taxonomy.metadata
+            - @service_container
         tags:
             - { name: doctrine.event_subscriber }

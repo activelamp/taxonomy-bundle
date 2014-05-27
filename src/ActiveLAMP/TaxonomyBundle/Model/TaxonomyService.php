@@ -11,6 +11,7 @@ use ActiveLAMP\TaxonomyBundle\Doctrine\QueryInjector;
 use ActiveLAMP\TaxonomyBundle\Entity\EntityTerm;
 use ActiveLAMP\TaxonomyBundle\Entity\RelatedEntityCollection;
 use ActiveLAMP\TaxonomyBundle\Entity\Vocabulary;
+use ActiveLAMP\TaxonomyBundle\Entity\VocabularyField;
 use ActiveLAMP\TaxonomyBundle\Metadata\TaxonomyMetadata;
 use Doctrine\ORM\EntityManager;
 
@@ -36,6 +37,7 @@ class TaxonomyService
 
     /**
      * @param EntityTerm $entityTerm
+     * @param bool $flush
      * @throws \LogicException
      */
     public function saveEntityTerm(EntityTerm $entityTerm, $flush = true)
@@ -43,10 +45,6 @@ class TaxonomyService
         $entity = $entityTerm->getEntity();
 
         $metadata = $this->metadata->getEntityMetadata($entity);
-
-        if ($metadata == null) {
-            throw new \LogicException('Entity is not registered as a recognized entity in TaxonomyBundle.');
-        }
 
         $id = $metadata->extractIdentifier($entity);
 
@@ -92,6 +90,25 @@ class TaxonomyService
     }
 
     /**
+     * @param $id
+     * @return \ActiveLAMP\TaxonomyBundle\Entity\Term
+     */
+    public function findTermById($id)
+    {
+        return $this->em->getRepository('ALTaxonomyBundle:Term')->find($id);
+    }
+
+    public function findTermsByIds(array $ids)
+    {
+        $qb = $this->em
+                    ->getRepository('ALTaxonomyBundle:Term')
+                    ->createQueryBuilder('t');
+
+        $qb->andWhere($qb->expr()->in('t.id', $ids));
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
      *
      * @param $terms
      * @param object|string|null $entity Entity object or entity identifier.
@@ -105,13 +122,6 @@ class TaxonomyService
 
         if (null !== $entity) {
             $metadata = $this->metadata->getEntityMetadata($entity);
-            if (!$metadata) {
-                throw new \InvalidArgumentException(
-                    sprintf(
-                        'Entity "%s" does not seem to be associated with any taxonomies.',
-                        is_object($entity) ? get_class($entity) : $entity
-                    ));
-            }
         }
 
         $qb = $this->em->getRepository('ALTaxonomyBundle:EntityTerm')->createQueryBuilder('eterm');
@@ -163,5 +173,50 @@ class TaxonomyService
             $this->em->flush();
         }
 
+    }
+
+    /**
+     * @param $entity
+     * @throws \RuntimeException
+     */
+    public function loadVocabularyFields($entity)
+    {
+        $metadata = $this->metadata->getEntityMetadata($entity);
+
+        foreach ($metadata->getVocabularies() as $vocabularyMetadata) {
+
+            $field = $vocabularyMetadata->extractVocabularyField($entity);
+
+            if (!$field) {
+
+                $reflectionProperty = $vocabularyMetadata->getReflectionProperty();
+                /** @var $vocabulary Vocabulary */
+                $vocabulary = $this->em
+                                   ->getRepository('ALTaxonomyBundle:Vocabulary')
+                                   ->findOneBy(array('name' => $vocabularyMetadata->getName()));
+
+                if (!$vocabulary) {
+                    throw new \RuntimeException(
+                        sprintf(
+                            'Cannot find "%s" vocabulary. Cannot link to %s::%s',
+                            $vocabularyMetadata->getName(),
+                            $metadata->getReflectionClass()->getName(),
+                            $reflectionProperty->getName()
+                        ));
+                }
+
+
+                $vocabularyField =
+                    new VocabularyField(
+                        $vocabulary,
+                        $this->em,
+                        $metadata,
+                        $metadata->extractIdentifier($entity));
+
+                $reflectionProperty->setAccessible(true);
+                $reflectionProperty->setValue($entity, $vocabularyField);
+                $reflectionProperty->setAccessible(false);
+            }
+        }
     }
 }

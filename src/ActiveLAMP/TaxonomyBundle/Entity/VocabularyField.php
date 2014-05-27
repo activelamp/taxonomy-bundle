@@ -29,12 +29,24 @@ class VocabularyField implements Collection
      */
     protected $terms = array();
 
+    /**
+     * @var Vocabulary
+     */
     protected $vocabulary;
 
+    /**
+     * @var \Doctrine\ORM\EntityManager
+     */
     protected $em;
 
+    /**
+     * @var \ActiveLAMP\TaxonomyBundle\Metadata\Entity
+     */
     protected $metadata;
 
+    /**
+     * @var mixed
+     */
     protected $identifier;
 
     /**
@@ -42,8 +54,14 @@ class VocabularyField implements Collection
      */
     protected $collection;
 
+    /**
+     * @var bool
+     */
     protected $initialized = false;
 
+    /**
+     * @var array
+     */
     protected $snapshot;
 
     public function __construct(Vocabulary $vocabulary, EntityManager $em, Entity $metadata, $identifier, $collection = null)
@@ -75,6 +93,7 @@ class VocabularyField implements Collection
                     ->createQueryBuilder('et')
                     ->innerJoin('et.term', 't')
                     ->innerJoin('t.vocabulary', 'v')
+                    ->addSelect('t')
                     ->andWhere('v.id = :vid')
                     ->andWhere('et.entityType = :type')
                     ->andWhere('et.entityIdentifier = :id')
@@ -568,5 +587,18 @@ class VocabularyField implements Collection
     {
         $this->initialize();
         return $this->collection->count();
+    }
+
+    /**
+     * Replace all contents of the collection.
+     *
+     * @param array $values
+     */
+    public function replace(array $values)
+    {
+        $this->clear();
+        foreach ($values as $value) {
+            $this->add($value);
+        }
     }
 }

@@ -7,14 +7,12 @@
  */
 
 namespace ActiveLAMP\TaxonomyBundle\Doctrine\EventListener;
-use ActiveLAMP\TaxonomyBundle\Entity\TermsLazyLoadCollection;
-use ActiveLAMP\TaxonomyBundle\Entity\Vocabulary;
-use ActiveLAMP\TaxonomyBundle\Entity\VocabularyField;
 use ActiveLAMP\TaxonomyBundle\Metadata\TaxonomyMetadata;
+use ActiveLAMP\TaxonomyBundle\Model\TaxonomyService;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Events;
-use Doctrine\ORM\PersistentCollection;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 
 /**
@@ -26,17 +24,18 @@ use Doctrine\ORM\PersistentCollection;
 class LoadVocabularyFields implements EventSubscriber
 {
 
-    /**
-     * @var TaxonomyMetadata
-     */
+    protected $container;
+
     protected $metadata;
 
+    protected $service;
+
     /**
-     * @param TaxonomyMetadata $metadata
+     * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
      */
-    public function __construct(TaxonomyMetadata $metadata)
+    public function __construct(ContainerInterface $container)
     {
-        $this->metadata = $metadata;
+        $this->container = $container;
     }
 
     /**
@@ -51,46 +50,39 @@ class LoadVocabularyFields implements EventSubscriber
         );
     }
 
+    /**
+     * @return TaxonomyMetadata
+     */
+    protected function getMetadata()
+    {
+        if (null === $this->metadata) {
+            $this->metadata = $this->container->get('al_taxonomy.metadata');
+        }
+
+        return $this->metadata;
+    }
+
+    /**
+     * @return TaxonomyService
+     */
+    protected function getService()
+    {
+        if (null === $this->service) {
+            $this->service = $this->container->get('al_taxonomy.taxonomy_service');
+        }
+
+        return $this->service;
+    }
+
     public function postLoad(LifecycleEventArgs $eventArgs)
     {
         $entity = $eventArgs->getEntity();
 
-        $metadata = $this->metadata->getEntityMetadata($entity);
-
-        if (!$metadata) {
+        if (!$this->getMetadata()->hasEntityMetadata($entity)) {
             return;
         }
 
-        foreach ($metadata->getVocabularies() as $vocabularyMetadata) {
+        $this->getService()->loadVocabularyFields($entity);
 
-            $reflectionProperty = $vocabularyMetadata->getReflectionProperty();
-            /** @var $vocabulary Vocabulary */
-            $vocabulary = $eventArgs->getEntityManager()
-                                    ->getRepository('ALTaxonomyBundle:Vocabulary')
-                                    ->findOneBy(array('name' => $vocabularyMetadata->getName()));
-
-            if (!$vocabulary) {
-                throw new \RuntimeException(
-                    sprintf(
-                        'Cannot find "%s" vocabulary. Cannot link to %s::%s',
-                        $vocabularyMetadata->getName(),
-                        $metadata->getReflectionClass()->getName(),
-                        $reflectionProperty->getName()
-                    ));
-            }
-
-
-            $vocabularyField =
-                new VocabularyField(
-                    $vocabulary,
-                    $eventArgs->getEntityManager(),
-                    $metadata,
-                    $metadata->extractIdentifier($entity));
-            
-            $reflectionProperty->setAccessible(true);
-            $reflectionProperty->setValue($entity, $vocabularyField);
-            $reflectionProperty->setAccessible(false);
-
-        }
     }
 }

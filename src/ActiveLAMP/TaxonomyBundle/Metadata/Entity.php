@@ -82,6 +82,17 @@ class Entity
         return $this->vocabularies;
     }
 
+    public function getVocabularyByName($name)
+    {
+        foreach ($this->vocabularies as $vocabulary) {
+            if ($vocabulary->getName() === $name) {
+                return $vocabulary;
+            }
+        }
+
+        return null;
+    }
+
     /**
      * @param $entity
      * @return mixed

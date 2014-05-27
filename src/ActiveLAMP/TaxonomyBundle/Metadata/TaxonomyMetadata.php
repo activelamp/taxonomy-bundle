@@ -24,7 +24,7 @@ class TaxonomyMetadata
 
     public function addEntityMetadata(Entity $entity)
     {
-        if ($this->getEntityMetadata($entity->getReflectionClass()->getName())) {
+        if ($this->hasEntityMetadata($entity->getReflectionClass()->getName())) {
             throw new \RuntimeException("Duplicate metadata entity.");
         }
 
@@ -33,7 +33,8 @@ class TaxonomyMetadata
 
     /**
      * @param $object
-     * @return Entity|null
+     * @throws \InvalidArgumentException
+     * @return Entity
      */
     public function getEntityMetadata($object)
     {
@@ -41,6 +42,10 @@ class TaxonomyMetadata
 
         if (is_object($object)) {
             $haystack = get_class($object);
+        }
+
+        if (!$this->hasEntityMetadata($haystack)) {
+            throw new \InvalidArgumentException(sprintf('"%s" is not a recognized taxonomy entity.', $haystack));
         }
 
         $metadata = null;
@@ -51,6 +56,23 @@ class TaxonomyMetadata
         }
 
         return null;
+    }
+
+    public function hasEntityMetadata($object)
+    {
+        $haystack = $object;
+
+        if (is_object($object)) {
+            $haystack = get_class($object);
+        }
+
+        foreach ($this->entityMetadata as $entity) {
+            if ($entity->getReflectionClass()->getName() === $haystack) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function getAllEntityMetadata()
