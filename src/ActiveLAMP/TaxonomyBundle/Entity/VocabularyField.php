@@ -44,6 +44,8 @@ class VocabularyField implements Collection
 
     protected $initialized = false;
 
+    protected $snapshot;
+
     public function __construct(Vocabulary $vocabulary, EntityManager $em, Entity $metadata, $identifier, $collection = null)
     {
         $this->vocabulary = $vocabulary;
@@ -82,6 +84,8 @@ class VocabularyField implements Collection
                         'type' => $this->metadata->getType(),
                     ))->getQuery()->getResult();
 
+        $this->snapshot = $eTerms;
+
         $this->collection = new ArrayCollection($eTerms);
 
         $this->initialized = true;
@@ -89,12 +93,24 @@ class VocabularyField implements Collection
 
     public function getInsertDiff()
     {
-
+        return array_udiff_assoc(
+            $this->collection->toArray(),
+            $this->snapshot,
+            function ($a, $b) {
+                return $a === $b ? 0 : 1;
+            }
+        );
     }
 
     public function getDeleteDiff()
     {
-
+        return array_udiff_assoc(
+            $this->snapshot,
+            $this->collection->toArray(),
+            function ($a, $b) {
+                return $a === $b ? 0 : 1;
+            }
+        );
     }
 
     /**
@@ -210,7 +226,7 @@ class VocabularyField implements Collection
 
         /** @var $eTerm EntityTerm */
         foreach ($this->collection->toArray() as $eTerm) {
-            if ($eTerm->getTerm() === $eTerm) {
+            if ($eTerm->getTerm() === $element) {
                 return $this->collection->removeElement($eTerm);
             }
         }

@@ -153,7 +153,6 @@ class TaxonomyService
                 $mods++;
             }
 
-
             foreach ($deletes as $eTerm) {
                 $this->em->remove($eTerm);
                 $mods++;
