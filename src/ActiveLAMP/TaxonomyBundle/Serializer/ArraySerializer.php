@@ -8,6 +8,7 @@
 
 namespace ActiveLAMP\TaxonomyBundle\Serializer;
 use ActiveLAMP\TaxonomyBundle\Entity\Term;
+use ActiveLAMP\TaxonomyBundle\Entity\VocabularyField;
 use ActiveLAMP\TaxonomyBundle\Metadata\TaxonomyMetadata;
 use ActiveLAMP\TaxonomyBundle\Model\TaxonomyService;
 
@@ -47,31 +48,39 @@ class ArraySerializer implements SerializerInterface
         $serialized = array();
 
         foreach ($metadata->getVocabularies() as $vocabMetadata) {
-
             $field = $vocabMetadata->extractVocabularyField($entity);
-
-            $vocabData = array(
-                'id' => $field->getVocabulary()->getId(),
-                'name' => $vocabMetadata->getName(),
-                'label' => $field->getVocabulary()->getLabelName(),
-                'description' => $field->getVocabulary()->getDescription(),
-                'terms' => array()
-            );
-
-            /** @var $term Term */
-            foreach ($field as $term) {
-                $vocabData['terms'][] = array(
-                    'id' => $term->getId(),
-                    'name' => $term->getName(),
-                    'weight' => $term->getWeight(),
-                );
-            }
-
+            $vocabData = $this->serializeField($field);
             $serialized[] = $vocabData;
         }
 
         return $serialized;
     }
+
+
+
+    public function serializeField(VocabularyField $field)
+    {
+        $vocabulary = $field->getVocabulary();
+        $vocabData = array(
+            'id' => $vocabulary->getId(),
+            'name' => $vocabulary->getName(),
+            'label' => $vocabulary->getLabelName(),
+            'description' => $vocabulary->getDescription(),
+            'terms' => array()
+        );
+
+        /** @var $term Term */
+        foreach ($field as $term) {
+            $vocabData['terms'][] = array(
+                'id' => $term->getId(),
+                'name' => $term->getName(),
+                'weight' => $term->getWeight(),
+            );
+        }
+
+        return $vocabData;
+    }
+
 
     public function setTaxonomyService(TaxonomyService $taxonomyService)
     {
@@ -147,4 +156,4 @@ class ArraySerializer implements SerializerInterface
 
         }
     }
-} 
+}

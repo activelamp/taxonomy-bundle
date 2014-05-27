@@ -7,6 +7,7 @@
  */
 
 namespace ActiveLAMP\TaxonomyBundle\Serializer;
+use ActiveLAMP\TaxonomyBundle\Entity\VocabularyField;
 
 
 /**
@@ -18,6 +19,8 @@ namespace ActiveLAMP\TaxonomyBundle\Serializer;
 interface SerializerInterface
 {
     public function serialize($entity);
+
+    public function serializeField(VocabularyField $field);
 
     public function deserialize($entity, $serializedData);
 }
