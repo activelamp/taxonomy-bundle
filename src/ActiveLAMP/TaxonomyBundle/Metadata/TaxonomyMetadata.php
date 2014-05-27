@@ -25,7 +25,7 @@ class TaxonomyMetadata
     public function addEntityMetadata(Entity $entity)
     {
         if ($this->hasEntityMetadata($entity->getReflectionClass()->getName())) {
-            throw new \RuntimeException("Duplicate metadata entity.");
+            return;
         }
 
         $this->entityMetadata[] = $entity;
