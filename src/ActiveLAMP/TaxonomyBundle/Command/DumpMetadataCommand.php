@@ -43,11 +43,9 @@ class DumpMetadataCommand extends ContainerAwareCommand
         $output->writeln('Reading metadata...');
         $output->writeln('');
 
-        /**
-         * Run Doctrine2 metadata phase
-         */
-        $em->getMetadataFactory()->getAllMetadata();
+        $metadataReader = $this->getContainer()->get('al_taxonomy.subscriber.read_metadata');
 
+        $metadataReader->onRequest();
 
         $metadata = $this->getContainer()->get('al_taxonomy.metadata');
 

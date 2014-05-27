@@ -38,11 +38,39 @@ class Entity
      */
     protected $vocabularies = array();
 
-    public function __construct(\ReflectionClass $refClass, $type, $identifier, array $vocabularies = array())
+    public function __construct(\ReflectionClass $refClass, $type = null, $identifier = null, array $vocabularies = array())
     {
         $this->reflectionClass = $refClass;
         $this->type = $type;
         $this->identifier = $identifier;
+        $this->vocabularies = $vocabularies;
+    }
+
+    /**
+     * @param $type
+     * @return $this
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+        return $this;
+    }
+
+    /**
+     * @param $identifier
+     * @return $this
+     */
+    public function setIdentifier($identifier)
+    {
+        $this->identifier = $identifier;
+        return $this;
+    }
+
+    /**
+     * @param array $vocabularies
+     */
+    public function setVocabularies(array $vocabularies)
+    {
         $this->vocabularies = $vocabularies;
     }
 
