@@ -168,7 +168,13 @@ class ArraySerializer implements SerializerInterface
             }
             $termIds[] = $termData['id'];
         }
-        $terms = $this->getTaxonomyService()->findTermsByIds($termIds);
+
+        if (count($termIds)) {
+            $terms = $this->getTaxonomyService()->findTermsByIds($termIds);
+        } else {
+            $terms = array();
+        }
+
         return $terms;
     }
 }

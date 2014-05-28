@@ -34,6 +34,14 @@ services:
         tags:
             - { name: doctrine.event_subscriber }
 
+
+    al_taxonomy.doctrine.subscriber.remove_entity_terms:
+        class: ActiveLAMP\TaxonomyBundle\Doctrine\EventListener\RemoveEntityTerms
+        arguments:
+            - @al_taxonomy.metadata
+        tags:
+            - { name: doctrine.event_subscriber }
+
     al_taxonomy.serializer.array:
         class: ActiveLAMP\TaxonomyBundle\Serializer\ArraySerializer
         arguments:

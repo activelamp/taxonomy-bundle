@@ -100,11 +100,16 @@ class TaxonomyService
 
     public function findTermsByIds(array $ids)
     {
+        if (count($ids) == 0) {
+            throw new \OutOfBoundsException('Expects an array containing at least one element. Empty array given.');
+        }
+
         $qb = $this->em
                     ->getRepository('ALTaxonomyBundle:Term')
                     ->createQueryBuilder('t');
 
         $qb->andWhere($qb->expr()->in('t.id', $ids));
+
         return $qb->getQuery()->getResult();
     }
 
