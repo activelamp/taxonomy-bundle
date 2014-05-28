@@ -30,7 +30,7 @@ class TermController extends Controller
         $vocabulary = $this->getVocabulary($vocabulary_id);
         $em = $this->getDoctrine()->getManager();
 
-        $entities = $em->getRepository('ALTaxonomyBundle:Term')->findAll(array('vocabulary' => $vocabulary));
+        $entities = $em->getRepository('ALTaxonomyBundle:Term')->findBy(array('vocabulary' => $vocabulary));
 
         return array(
             'vocabulary' => $vocabulary,
