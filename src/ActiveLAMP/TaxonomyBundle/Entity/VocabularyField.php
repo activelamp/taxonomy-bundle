@@ -120,6 +120,14 @@ class VocabularyField implements Collection
 
     }
 
+    /**
+     * @return Traversable|Term[]
+     */
+    public function getTerms()
+    {
+        return $this->getIterator();
+    }
+
     public function getInsertDiff()
     {
         $this->initialize();
@@ -155,6 +163,15 @@ class VocabularyField implements Collection
                 'Expected instance of %s. "%s" given.',
                 __NAMESPACE__ . '\\Term',
                 get_class($element)
+            ));
+        }
+
+        if ($element->getVocabulary() !== $this->vocabulary) {
+            throw new \InvalidArgumentException(sprintf(
+                'Term "%s" (#%d) does not belong in the "%s" vocabulary.',
+                $element->getName(),
+                $element->getId(),
+                $this->vocabulary->getName()
             ));
         }
     }

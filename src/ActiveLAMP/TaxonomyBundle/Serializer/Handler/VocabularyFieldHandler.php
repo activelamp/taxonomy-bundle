@@ -33,6 +33,13 @@ class VocabularyFieldHandler implements SubscribingHandlerInterface
      */
     protected $serializer;
 
+    protected $serializeDefaults = array(
+        'serializeMode' => array(
+            'singular' => true,
+            'value' => 'field'
+        ),
+    );
+
     /**
      * @var \Symfony\Component\DependencyInjection\ContainerInterface
      */
@@ -84,12 +91,17 @@ class VocabularyFieldHandler implements SubscribingHandlerInterface
         array $type,
         Context $context
     ) {
-        if ($field instanceof VocabularyField) {
-            $serialized = $this->serializer->serializeField($field);
-            return $serialized;
-        } elseif ($field instanceof \Traversable) {
+
+        if (!$field instanceof VocabularyField && $field instanceof \Traversable) {
             return iterator_to_array($field);
         }
+
+        if ($field instanceof VocabularyField) {
+            $serialized = $this->serializer->serializeTerms($field->getTerms());
+            return $serialized;
+        }
+
+        throw new \InvalidArgumentException("Cannot serialize. Expected VocabularyField or Traversable containing Terms.");
     }
 
     public function deserializeVocabularyFieldFromJson(
@@ -99,6 +111,5 @@ class VocabularyFieldHandler implements SubscribingHandlerInterface
         Context $context
     ) {
         return new ArrayCollection($this->serializer->deserializeTerms($value));
-
     }
 }

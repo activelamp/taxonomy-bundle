@@ -56,6 +56,27 @@ class ArraySerializer implements SerializerInterface
         return $serialized;
     }
 
+    public function serializeTerms($terms)
+    {
+        $termData = array();
+        foreach ($terms as $term) {
+
+            if (!$term instanceof Term) {
+                throw new \InvalidArgumentException(sprintf(
+                    'Expected instance of Term. "%s" given.',
+                    get_class($term)
+                ));
+            }
+
+            $termData[] = array(
+                'id' => $term->getId(),
+                'name' => $term->getName(),
+                'weight' => $term->getWeight(),
+            );
+        }
+
+        return $termData;
+    }
 
 
     public function serializeField(VocabularyField $field)
@@ -66,17 +87,8 @@ class ArraySerializer implements SerializerInterface
             'name' => $vocabulary->getName(),
             'label' => $vocabulary->getLabelName(),
             'description' => $vocabulary->getDescription(),
-            'terms' => array()
+            'terms' => $this->serializeTerms($field->getTerms()),
         );
-
-        /** @var $term Term */
-        foreach ($field as $term) {
-            $vocabData['terms'][] = array(
-                'id' => $term->getId(),
-                'name' => $term->getName(),
-                'weight' => $term->getWeight(),
-            );
-        }
 
         return $vocabData;
     }
