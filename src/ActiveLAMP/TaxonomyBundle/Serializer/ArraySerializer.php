@@ -48,7 +48,7 @@ class ArraySerializer implements SerializerInterface
         $serialized = array();
 
         foreach ($metadata->getVocabularies() as $vocabMetadata) {
-            $field = $vocabMetadata->extractVocabularyField($entity);
+            $field = $vocabMetadata->extractValueInField($entity);
             $vocabData = $this->serializeField($field);
             $serialized[] = $vocabData;
         }
@@ -139,21 +139,24 @@ class ArraySerializer implements SerializerInterface
                 ));
             }
 
-            $field = $vocabMetadata->extractVocabularyField($entity);
+            $field = $vocabMetadata->extractValueInField($entity);
 
-            $termIds = array();
-
-            foreach ($vocabData['terms'] as $i => $termData) {
-                if (!isset($termData['id'])) {
-                    throw new \OutOfBoundsException('Cannot find "id" attribute of term item on index ' . $i);
-                }
-
-                $termIds[] = $termData['id'];
-            }
-
-            $terms = $service->findTermsByIds($termIds);
+            $terms = $this->deserializeTerms($vocabData['terms']);
             $field->replace($terms);
 
         }
+    }
+
+    public function deserializeTerms(array $terms)
+    {
+        $termIds = array();
+        foreach ($terms as $i => $termData) {
+            if (!isset($termData['id'])) {
+                throw new \OutOfBoundsException('Cannot find "id" attribute of term item on index ' . $i);
+            }
+            $termIds[] = $termData['id'];
+        }
+        $terms = $this->getTaxonomyService()->findTermsByIds($termIds);
+        return $terms;
     }
 }

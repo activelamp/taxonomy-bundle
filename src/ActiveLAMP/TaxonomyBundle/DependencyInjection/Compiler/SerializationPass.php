@@ -43,7 +43,7 @@ class SerializationPass implements CompilerPassInterface
             new Definition(
                 'ActiveLAMP\\TaxonomyBundle\\Serializer\\Handler\\VocabularyFieldHandler',
                 array(
-                    new Reference('al_taxonomy.metadata'),
+                    new Reference('service_container'),
                 )
             );
 

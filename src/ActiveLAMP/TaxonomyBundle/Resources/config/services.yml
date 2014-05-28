@@ -33,3 +33,9 @@ services:
             - @service_container
         tags:
             - { name: doctrine.event_subscriber }
+
+    al_taxonomy.serializer.array:
+        class: ActiveLAMP\TaxonomyBundle\Serializer\ArraySerializer
+        arguments:
+            - @al_taxonomy.metadata
+            - @al_taxonomy.taxonomy_service

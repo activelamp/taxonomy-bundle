@@ -8,6 +8,7 @@
 
 namespace ActiveLAMP\TaxonomyBundle\Metadata;
 use ActiveLAMP\TaxonomyBundle\Entity\VocabularyField;
+use Doctrine\Common\Collections\ArrayCollection;
 
 
 /**
@@ -55,9 +56,9 @@ class Vocabulary
 
     /**
      * @param $entity
-     * @return VocabularyField
+     * @return VocabularyField|ArrayCollection
      */
-    public function extractVocabularyField($entity)
+    public function extractValueInField($entity)
     {
         $this->field->setAccessible(true);
         $field = $this->field->getValue($entity);

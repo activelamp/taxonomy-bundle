@@ -87,6 +87,11 @@ class VocabularyField implements Collection
             return;
         }
 
+        $unManaged = array();
+        if ($this->collection !== null) {
+            $unManaged = $this->collection->toArray();
+        }
+
         $eTerms =
             $this->em
                 ->getRepository('ALTaxonomyBundle:EntityTerm')
@@ -108,10 +113,16 @@ class VocabularyField implements Collection
         $this->collection = new ArrayCollection($eTerms);
 
         $this->initialized = true;
+
+        foreach ($unManaged as $term) {
+            $this->add($term);
+        }
+
     }
 
     public function getInsertDiff()
     {
+        $this->initialize();
         return array_udiff_assoc(
             $this->collection->toArray(),
             $this->snapshot,
@@ -123,6 +134,7 @@ class VocabularyField implements Collection
 
     public function getDeleteDiff()
     {
+        $this->initialize();
         return array_udiff_assoc(
             $this->snapshot,
             $this->collection->toArray(),

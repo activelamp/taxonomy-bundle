@@ -185,38 +185,43 @@ class TaxonomyService
 
         foreach ($metadata->getVocabularies() as $vocabularyMetadata) {
 
-            $field = $vocabularyMetadata->extractVocabularyField($entity);
+            $field = $vocabularyMetadata->extractValueInField($entity);
 
-            if (!$field) {
+            $coll = null;
 
-                $reflectionProperty = $vocabularyMetadata->getReflectionProperty();
-                /** @var $vocabulary Vocabulary */
-                $vocabulary = $this->em
-                                   ->getRepository('ALTaxonomyBundle:Vocabulary')
-                                   ->findOneBy(array('name' => $vocabularyMetadata->getName()));
-
-                if (!$vocabulary) {
-                    throw new \RuntimeException(
-                        sprintf(
-                            'Cannot find "%s" vocabulary. Cannot link to %s::%s',
-                            $vocabularyMetadata->getName(),
-                            $metadata->getReflectionClass()->getName(),
-                            $reflectionProperty->getName()
-                        ));
-                }
-
-
-                $vocabularyField =
-                    new VocabularyField(
-                        $vocabulary,
-                        $this->em,
-                        $metadata,
-                        $metadata->extractIdentifier($entity));
-
-                $reflectionProperty->setAccessible(true);
-                $reflectionProperty->setValue($entity, $vocabularyField);
-                $reflectionProperty->setAccessible(false);
+            if ($field !== null) {
+                $coll = $field;
             }
+
+            $reflectionProperty = $vocabularyMetadata->getReflectionProperty();
+
+            /** @var $vocabulary Vocabulary */
+            $vocabulary = $this->em
+                               ->getRepository('ALTaxonomyBundle:Vocabulary')
+                               ->findOneBy(array('name' => $vocabularyMetadata->getName()));
+
+            if (!$vocabulary) {
+                throw new \RuntimeException(
+                    sprintf(
+                        'Cannot find "%s" vocabulary. Cannot link to %s::%s',
+                        $vocabularyMetadata->getName(),
+                        $metadata->getReflectionClass()->getName(),
+                        $reflectionProperty->getName()
+                    ));
+            }
+
+            $vocabularyField =
+                new VocabularyField(
+                    $vocabulary,
+                    $this->em,
+                    $metadata,
+                    $metadata->extractIdentifier($entity),
+                    $coll
+                );
+
+            $reflectionProperty->setAccessible(true);
+            $reflectionProperty->setValue($entity, $vocabularyField);
+            $reflectionProperty->setAccessible(false);
         }
     }
 }

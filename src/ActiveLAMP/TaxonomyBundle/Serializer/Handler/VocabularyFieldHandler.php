@@ -11,10 +11,13 @@ use ActiveLAMP\TaxonomyBundle\Entity\VocabularyField;
 use ActiveLAMP\TaxonomyBundle\Metadata\TaxonomyMetadata;
 use ActiveLAMP\TaxonomyBundle\Serializer\ArraySerializer;
 use ActiveLAMP\TaxonomyBundle\Serializer\SerializerInterface;
+use Doctrine\Common\Collections\ArrayCollection;
 use JMS\Serializer\Context;
 use JMS\Serializer\GraphNavigator;
 use JMS\Serializer\Handler\SubscribingHandlerInterface;
+use JMS\Serializer\JsonDeserializationVisitor;
 use JMS\Serializer\JsonSerializationVisitor;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 
 /**
@@ -30,9 +33,15 @@ class VocabularyFieldHandler implements SubscribingHandlerInterface
      */
     protected $serializer;
 
-    public function __construct(TaxonomyMetadata $metadata)
+    /**
+     * @var \Symfony\Component\DependencyInjection\ContainerInterface
+     */
+    protected $container;
+
+    public function __construct(ContainerInterface $container)
     {
-        $this->serializer = new ArraySerializer($metadata);
+        $this->serializer = $container->get('al_taxonomy.serializer.array');
+        $this->container = $container;
     }
 
     /**
@@ -60,16 +69,36 @@ class VocabularyFieldHandler implements SubscribingHandlerInterface
                 'type' => 'ActiveLAMP\\TaxonomyBundle\\Entity\\VocabularyField',
                 'method' => 'serializeVocabularyFieldToJson',
             ),
+            array(
+                'direction' => GraphNavigator::DIRECTION_DESERIALIZATION,
+                'format' => 'json',
+                'type' => 'ActiveLAMP\\TaxonomyBundle\\Entity\\VocabularyField',
+                'method' => 'deserializeVocabularyFieldFromJson',
+            ),
         );
     }
 
     public function serializeVocabularyFieldToJson(
         JsonSerializationVisitor $visitor,
-        VocabularyField $field,
+        $field,
         array $type,
         Context $context
     ) {
-        $serialized = $this->serializer->serializeField($field);
-        return $serialized;
+        if ($field instanceof VocabularyField) {
+            $serialized = $this->serializer->serializeField($field);
+            return $serialized;
+        } elseif ($field instanceof \Traversable) {
+            return iterator_to_array($field);
+        }
+    }
+
+    public function deserializeVocabularyFieldFromJson(
+        JsonDeserializationVisitor $visitor,
+        $value,
+        array $type,
+        Context $context
+    ) {
+        return new ArrayCollection($this->serializer->deserializeTerms($value));
+
     }
 }

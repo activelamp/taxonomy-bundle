@@ -157,7 +157,7 @@ class Entity
     {
         $fields = array();
         foreach ($this->vocabularies as $vocabulary) {
-            $fields[] = $vocabulary->extractVocabularyField($entity);
+            $fields[] = $vocabulary->extractValueInField($entity);
         }
         return $fields;
     }
