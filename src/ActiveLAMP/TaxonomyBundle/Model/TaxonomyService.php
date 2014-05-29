@@ -9,7 +9,7 @@
 namespace ActiveLAMP\TaxonomyBundle\Model;
 use ActiveLAMP\TaxonomyBundle\Doctrine\QueryInjector;
 use ActiveLAMP\TaxonomyBundle\Entity\EntityTerm;
-use ActiveLAMP\TaxonomyBundle\Entity\RelatedEntityCollection;
+use ActiveLAMP\TaxonomyBundle\Collection\RelatedEntityCollection;
 use ActiveLAMP\TaxonomyBundle\Entity\SingularVocabularyField;
 use ActiveLAMP\TaxonomyBundle\Entity\Vocabulary;
 use ActiveLAMP\TaxonomyBundle\Entity\MultipleVocabularyField;
@@ -163,8 +163,10 @@ class TaxonomyService
             $field = $vocabMetadata->extractValueInField($entity);
 
             if (!$field instanceof VocabularyFieldInterface) {
+
                 $this->loadVocabularyField($entity, $vocabMetadata->getName());
                 $field = $vocabMetadata->extractValueInField($entity);
+
             } elseif (!$field->isInitialized()) {
                 $field->initialize();
             }
@@ -183,12 +185,6 @@ class TaxonomyService
                 $this->em->remove($eTerm);
                 $mods++;
             }
-
-        }
-
-        foreach ($fields as $field) {
-
-
         }
 
         if ($mods > 0 && $persist) {

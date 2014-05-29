@@ -12,8 +12,6 @@ use ActiveLAMP\TaxonomyBundle\Form\VocabularyType;
 
 /**
  * OptionsList controller.
- *
- * @Route("/admin/structure/taxonomy")
  */
 class TaxonomyController extends Controller
 {
@@ -21,7 +19,7 @@ class TaxonomyController extends Controller
     /**
      * Lists all OptionsList entities.
      *
-     * @Route("/", name="admin_structure_vocabulary-list")
+     * @Route("/", name="al_taxonomy_list_vocabularies")
      * @Method("GET")
      * @Template()
      */
@@ -38,7 +36,7 @@ class TaxonomyController extends Controller
     /**
      * Creates a new OptionsList entity.
      *
-     * @Route("/", name="admin_structure_vocabulary-list_create")
+     * @Route("/", name="al_taxonomy_create_vocabulary")
      * @Method("POST")
      * @Template("ALTaxonomyBundle:Vocabulary:new.html.twig")
      */
@@ -53,7 +51,7 @@ class TaxonomyController extends Controller
             $em->persist($entity);
             $em->flush();
 
-            return $this->redirect($this->generateUrl('admin_structure_vocabulary-list'));
+            return $this->redirect($this->generateUrl('al_taxonomy_list_vocabularies'));
         }
 
         return array(
@@ -72,7 +70,7 @@ class TaxonomyController extends Controller
     private function createCreateForm(Vocabulary $entity)
     {
         $form = $this->createForm(new VocabularyType(), $entity, array(
-            'action' => $this->generateUrl('admin_structure_vocabulary-list_create'),
+            'action' => $this->generateUrl('al_taxonomy_create_vocabulary'),
             'method' => 'POST',
         ));
 
@@ -82,7 +80,7 @@ class TaxonomyController extends Controller
     /**
      * Displays a form to create a new OptionsList entity.
      *
-     * @Route("/new", name="admin_structure_vocabulary-list_new")
+     * @Route("/new", name="al_taxonomy_new_vocabulary")
      * @Method("GET")
      * @Template()
      */
@@ -100,7 +98,7 @@ class TaxonomyController extends Controller
     /**
      * Finds and displays a OptionsList entity.
      *
-     * @Route("/{id}", name="admin_structure_vocabulary-list_show")
+     * @Route("/{id}", name="al_taxonomy_show_vocabulary")
      * @Method("GET")
      * @Template()
      */
@@ -126,7 +124,7 @@ class TaxonomyController extends Controller
     /**
      * Displays a form to edit an existing OptionsList entity.
      *
-     * @Route("/{id}/edit", name="admin_structure_vocabulary-list_edit")
+     * @Route("/{id}/edit", name="al_taxonomy_edit_vocabulary")
      * @Method("GET")
      * @Template()
      */
@@ -160,7 +158,7 @@ class TaxonomyController extends Controller
     private function createEditForm(Vocabulary $entity)
     {
         $form = $this->createForm(new VocabularyType(), $entity, array(
-            'action' => $this->generateUrl('admin_structure_vocabulary-list_update', array('id' => $entity->getId())),
+            'action' => $this->generateUrl('al_taxonomy_update_vocabulary', array('id' => $entity->getId())),
             'method' => 'PUT',
         ));
 
@@ -169,7 +167,7 @@ class TaxonomyController extends Controller
     /**
      * Edits an existing OptionsList entity.
      *
-     * @Route("/{id}", name="admin_structure_vocabulary-list_update")
+     * @Route("/{id}", name="al_taxonomy_update_vocabulary")
      * @Method("PUT")
      * @Template("ALTaxonomyBundle:Vocabulary:edit.html.twig")
      */
@@ -190,7 +188,7 @@ class TaxonomyController extends Controller
         if ($editForm->isValid()) {
             $em->flush();
 
-            return $this->redirect($this->generateUrl('admin_structure_vocabulary-list'));
+            return $this->redirect($this->generateUrl('al_taxonomy_list_vocabularies'));
         }
 
         return array(
@@ -202,7 +200,7 @@ class TaxonomyController extends Controller
     /**
      * Deletes a OptionsList entity.
      *
-     * @Route("/{id}", name="admin_structure_vocabulary-list_delete")
+     * @Route("/{id}", name="al_taxonomy_delete_vocabulary")
      * @Method("DELETE")
      */
     public function deleteAction(Request $request, $id)
@@ -222,7 +220,7 @@ class TaxonomyController extends Controller
             $em->flush();
         }
 
-        return $this->redirect($this->generateUrl('admin_structure_vocabulary-list'));
+        return $this->redirect($this->generateUrl('al_taxonomy_delete_vocabulary'));
     }
 
     /**
@@ -235,7 +233,7 @@ class TaxonomyController extends Controller
     private function createDeleteForm($id)
     {
         return $this->createFormBuilder()
-            ->setAction($this->generateUrl('admin_structure_vocabulary-list_delete', array('id' => $id)))
+            ->setAction($this->generateUrl('al_taxonomy_delete_vocabulary', array('id' => $id)))
             ->setMethod('DELETE')
             ->add('submit', 'submit', array('label' => 'Delete', 'attr' => array('class' => 'btn btn-default')))
             ->getForm()

@@ -13,7 +13,7 @@ use ActiveLAMP\TaxonomyBundle\Form\TermType;
 /**
  * Term controller.
  *
- * @Route("/admin/structure/taxonomy/{vocabulary_id}/term")
+ * @Route("/{vocabulary_id}/term")
  */
 class TermController extends Controller
 {
@@ -21,7 +21,7 @@ class TermController extends Controller
     /**
      * Lists all Term entities.
      *
-     * @Route("/", name="admin_structure_taxonomy_term")
+     * @Route("/", name="al_taxonomy_list_terms")
      * @Method("GET")
      * @Template()
      */
@@ -40,7 +40,7 @@ class TermController extends Controller
     /**
      * Creates a new Term entity.
      *
-     * @Route("/", name="admin_structure_taxonomy_term_create")
+     * @Route("/", name="al_taxonomy_create_term")
      * @Method("POST")
      * @Template("ALTaxonomyBundle:Term:new.html.twig")
      */
@@ -59,7 +59,7 @@ class TermController extends Controller
             $em->persist($entity);
             $em->flush();
 
-            return $this->redirect($this->generateUrl('admin_structure_taxonomy_term_new', array('vocabulary_id' => $vocabulary_id)));
+            return $this->redirect($this->generateUrl('al_taxonomy_new_term', array('vocabulary_id' => $vocabulary_id)));
         }
 
         return array(
@@ -70,16 +70,17 @@ class TermController extends Controller
     }
 
     /**
-    * Creates a form to create a Term entity.
-    *
-    * @param Term $entity The entity
-    *
-    * @return \Symfony\Component\Form\Form The form
-    */
+     * Creates a form to create a Term entity.
+     *
+     * @param Term $entity The entity
+     *
+     * @param $vocabulary_id
+     * @return \Symfony\Component\Form\Form The form
+     */
     private function createCreateForm(Term $entity, $vocabulary_id)
     {
         $form = $this->createForm(new TermType(), $entity, array(
-            'action' => $this->generateUrl('admin_structure_taxonomy_term_create', array('vocabulary_id' => $vocabulary_id)),
+            'action' => $this->generateUrl('al_taxonomy_create_term', array('vocabulary_id' => $vocabulary_id)),
             'method' => 'POST',
         ));
 
@@ -89,7 +90,7 @@ class TermController extends Controller
     /**
      * Displays a form to create a new Term entity.
      *
-     * @Route("/new", name="admin_structure_taxonomy_term_new")
+     * @Route("/new", name="al_taxonomy_new_term")
      * @Method("GET")
      * @Template()
      */
@@ -108,7 +109,7 @@ class TermController extends Controller
     /**
      * Finds and displays a Term entity.
      *
-     * @Route("/{id}", name="admin_structure_taxonomy_term_show")
+     * @Route("/{id}", name="al_taxonomy_show_term")
      * @Method("GET")
      * @Template()
      */
@@ -134,7 +135,7 @@ class TermController extends Controller
     /**
      * Displays a form to edit an existing Term entity.
      *
-     * @Route("/{id}/edit", name="admin_structure_taxonomy_term_edit")
+     * @Route("/{id}/edit", name="al_taxonomy_edit_term")
      * @Method("GET")
      * @Template()
      */
@@ -169,7 +170,7 @@ class TermController extends Controller
     private function createEditForm(Term $entity, $vocabulary_id)
     {
         $form = $this->createForm(new TermType(), $entity, array(
-            'action' => $this->generateUrl('admin_structure_taxonomy_term_update', array('id' => $entity->getId(), 'vocabulary_id' => $vocabulary_id)),
+            'action' => $this->generateUrl('al_taxonomy_update_term', array('id' => $entity->getId(), 'vocabulary_id' => $vocabulary_id)),
             'method' => 'PUT',
         ));
 
@@ -178,7 +179,7 @@ class TermController extends Controller
     /**
      * Edits an existing Term entity.
      *
-     * @Route("/{id}", name="admin_structure_taxonomy_term_update")
+     * @Route("/{id}", name="al_taxonomy_update_term")
      * @Method("PUT")
      * @Template("ALTaxonomyBundle:Term:edit.html.twig")
      */
@@ -199,7 +200,7 @@ class TermController extends Controller
         if ($editForm->isValid()) {
             $em->flush();
 
-            return $this->redirect($this->generateUrl('admin_structure_taxonomy_term', array('vocabulary_id' => $vocabulary_id)));
+            return $this->redirect($this->generateUrl('al_taxonomy_list_terms', array('vocabulary_id' => $vocabulary_id)));
         }
 
         return array(
@@ -211,7 +212,7 @@ class TermController extends Controller
     /**
      * Deletes a Term entity.
      *
-     * @Route("/{id}", name="admin_structure_taxonomy_term_delete")
+     * @Route("/{id}", name="al_taxonomy_delete_term")
      * @Method("DELETE")
      */
     public function deleteAction(Request $request, $id, $vocabulary_id)
@@ -231,7 +232,7 @@ class TermController extends Controller
             $em->flush();
         }
 
-        return $this->redirect($this->generateUrl('admin_structure_taxonomy_term', array('vocabulary_id' => $vocabulary_id)));
+        return $this->redirect($this->generateUrl('al_taxonomy_list_terms', array('vocabulary_id' => $vocabulary_id)));
     }
 
     /**
@@ -244,7 +245,7 @@ class TermController extends Controller
     private function createDeleteForm($id, $vocabulary_id)
     {
         return $this->createFormBuilder()
-            ->setAction($this->generateUrl('admin_structure_taxonomy_term_delete', array('id' => $id, 'vocabulary_id' => $vocabulary_id)))
+            ->setAction($this->generateUrl('al_taxonomy_delete_term', array('id' => $id, 'vocabulary_id' => $vocabulary_id)))
             ->setMethod('DELETE')
             ->add('submit', 'submit', array('label' => 'Delete', 'attr' => array('class' => 'btn btn-default')))
             ->getForm()

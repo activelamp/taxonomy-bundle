@@ -6,7 +6,7 @@
  * Time: 2:31 PM
  */
 
-namespace ActiveLAMP\TaxonomyBundle\Entity;
+namespace ActiveLAMP\TaxonomyBundle\Collection;
 use ActiveLAMP\TaxonomyBundle\Iterator\InnerEntityIterator;
 use Traversable;
 

@@ -31,9 +31,16 @@ class Term
     /**
      * @var string
      *
-     * @ORM\Column(name="name", type="string", length=255)
+     * @ORM\Column(name="name", type="string", length=255, unique=true)
      */
     private $name;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="label", type="string", length=255)
+     */
+    private $label;
 
     /**
      * @var integer
@@ -52,6 +59,7 @@ class Term
     public function __construct()
     {
         $this->entityTerms = new ArrayCollection();
+        $this->weight = 0;
     }
 
     /**
@@ -133,6 +141,17 @@ class Term
         return $this->vocabulary;
     }
 
+    /**
+     * @return string
+     */
+    public function getLabelName()
+    {
+        return $this->label;
+    }
+
+    /**
+     * @return string
+     */
     function __toString()
     {
         return $this->name;

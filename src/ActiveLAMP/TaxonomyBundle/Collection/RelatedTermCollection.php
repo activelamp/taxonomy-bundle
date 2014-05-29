@@ -6,7 +6,8 @@
  * Time: 9:31 AM
  */
 
-namespace ActiveLAMP\TaxonomyBundle\Entity;
+namespace ActiveLAMP\TaxonomyBundle\Collection;
+use ActiveLAMP\TaxonomyBundle\Collection\RelatedEntityCollection;
 use ActiveLAMP\TaxonomyBundle\Iterator\AbstractInnerMemberIterator;
 use ActiveLAMP\TaxonomyBundle\Iterator\InnerTermIterator;
 use Traversable;

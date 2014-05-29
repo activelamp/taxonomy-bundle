@@ -8,7 +8,7 @@
 
 namespace ActiveLAMP\TaxonomyBundle\Tests\Collection;
 use ActiveLAMP\TaxonomyBundle\Entity\EntityTerm;
-use ActiveLAMP\TaxonomyBundle\Entity\RelatedTermCollection;
+use ActiveLAMP\TaxonomyBundle\Collection\RelatedTermCollection;
 use ActiveLAMP\TaxonomyBundle\Entity\Term;
 
 
