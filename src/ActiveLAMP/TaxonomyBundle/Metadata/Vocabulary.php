@@ -7,7 +7,7 @@
  */
 
 namespace ActiveLAMP\TaxonomyBundle\Metadata;
-use ActiveLAMP\TaxonomyBundle\Entity\VocabularyField;
+use ActiveLAMP\TaxonomyBundle\Entity\MultipleVocabularyField;
 use Doctrine\Common\Collections\ArrayCollection;
 
 
@@ -30,13 +30,20 @@ class Vocabulary
     protected $name;
 
     /**
+     * @var bool
+     */
+    protected $singular = false;
+
+    /**
      * @param \ReflectionProperty $field
      * @param $name
+     * @param bool $singular
      */
-    public function __construct(\ReflectionProperty $field, $name)
+    public function __construct(\ReflectionProperty $field, $name, $singular)
     {
         $this->field = $field;
         $this->name = $name;
+        $this->singular = $singular;
     }
 
     public function getName()
@@ -49,6 +56,11 @@ class Vocabulary
         return $this->field->getName();
     }
 
+    public function isSingular()
+    {
+        return (boolean) $this->singular;
+    }
+
     public function getReflectionProperty()
     {
         return $this->field;
@@ -56,7 +68,7 @@ class Vocabulary
 
     /**
      * @param $entity
-     * @return VocabularyField|ArrayCollection
+     * @return MultipleVocabularyField|ArrayCollection
      */
     public function extractValueInField($entity)
     {
@@ -65,5 +77,12 @@ class Vocabulary
         $this->field->setAccessible(false);
 
         return $field;
+    }
+
+    public function setVocabularyField($field, $entity)
+    {
+        $this->field->setAccessible(true);
+        $this->field->setValue($entity, $field);
+        $this->field->setAccessible(false);
     }
 } 

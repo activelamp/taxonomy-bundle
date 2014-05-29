@@ -25,6 +25,8 @@ class Vocabulary extends Annotation
 
     protected $columnName = null;
 
+    protected $singular = false;
+
     public function getName()
     {
         return $this->name;
@@ -37,5 +39,10 @@ class Vocabulary extends Annotation
         }
 
         return $this->columnName;
+    }
+
+    public function isSingular()
+    {
+        return (boolean) $this->singular;
     }
 } 

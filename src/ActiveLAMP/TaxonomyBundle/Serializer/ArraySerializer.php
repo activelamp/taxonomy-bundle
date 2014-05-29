@@ -8,7 +8,7 @@
 
 namespace ActiveLAMP\TaxonomyBundle\Serializer;
 use ActiveLAMP\TaxonomyBundle\Entity\Term;
-use ActiveLAMP\TaxonomyBundle\Entity\VocabularyField;
+use ActiveLAMP\TaxonomyBundle\Entity\MultipleVocabularyField;
 use ActiveLAMP\TaxonomyBundle\Metadata\TaxonomyMetadata;
 use ActiveLAMP\TaxonomyBundle\Model\TaxonomyService;
 
@@ -19,7 +19,7 @@ use ActiveLAMP\TaxonomyBundle\Model\TaxonomyService;
  * @package ActiveLAMP\TaxonomyBundle\Serializer
  * @author Bez Hermoso <bez@activelamp.com>
  */
-class ArraySerializer implements SerializerInterface
+class ArraySerializer
 {
     protected $metadata;
 
@@ -79,7 +79,7 @@ class ArraySerializer implements SerializerInterface
     }
 
 
-    public function serializeField(VocabularyField $field)
+    public function serializeField(MultipleVocabularyField $field)
     {
         $vocabulary = $field->getVocabulary();
         $vocabData = array(
@@ -176,5 +176,23 @@ class ArraySerializer implements SerializerInterface
         }
 
         return $terms;
+    }
+
+    public function serializeTerm(Term $term)
+    {
+        return array(
+            'id' => $term->getId(),
+            'name' => $term->getName(),
+            'weight' => $term->getWeight(),
+        );
+    }
+
+    public function deserializeTerm($data)
+    {
+        if (!isset($data['id'])) {
+            throw new \OutOfBoundsException('Expected an "id" attribute.');
+        }
+
+        return $this->getTaxonomyService()->findTermById($data['id']);
     }
 }

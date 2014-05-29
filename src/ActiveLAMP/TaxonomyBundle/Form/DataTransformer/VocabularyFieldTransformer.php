@@ -8,7 +8,7 @@
 
 namespace ActiveLAMP\TaxonomyBundle\Form\DataTransformer;
 use ActiveLAMP\TaxonomyBundle\Entity\Term;
-use ActiveLAMP\TaxonomyBundle\Entity\VocabularyField;
+use ActiveLAMP\TaxonomyBundle\Entity\MultipleVocabularyField;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Exception\TransformationFailedException;
 
@@ -55,7 +55,7 @@ class VocabularyFieldTransformer implements DataTransformerInterface
             return '';
         }
 
-        if ($value instanceof VocabularyField) {
+        if ($value instanceof MultipleVocabularyField) {
 
             $values = array();
 

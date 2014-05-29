@@ -41,15 +41,24 @@ class SerializationPass implements CompilerPassInterface
 
         $handler =
             new Definition(
-                'ActiveLAMP\\TaxonomyBundle\\Serializer\\Handler\\VocabularyFieldHandler',
+                'ActiveLAMP\\TaxonomyBundle\\Serializer\\Handler\\MultipleVocabularyFieldHandler',
                 array(
                     new Reference('service_container'),
                 )
             );
 
         $handler->addTag('jms_serializer.subscribing_handler');
-        $container->addDefinitions(array($handler));
-        $container->setDefinition('al_taxonomy.jms_serializer.handler.vocabulary_field', $handler);
+        $container->setDefinition('al_taxonomy.jms_serializer.handler.multiple_vocabulary_field', $handler);
+
+        $handler =
+            new Definition(
+                'ActiveLAMP\\TaxonomyBundle\\Serializer\\Handler\\SingularVocabularyFieldHandler',
+                array(
+                    new Reference('service_container'),
+                )
+            );
+        $handler->addTag('jms_serializer.subscribing_handler');
+        $container->setDefinition('al_taxonomy.jms_serializer.handler.singular_vocabulary_field', $handler);
 
     }
 }

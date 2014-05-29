@@ -10,8 +10,10 @@ namespace ActiveLAMP\TaxonomyBundle\Model;
 use ActiveLAMP\TaxonomyBundle\Doctrine\QueryInjector;
 use ActiveLAMP\TaxonomyBundle\Entity\EntityTerm;
 use ActiveLAMP\TaxonomyBundle\Entity\RelatedEntityCollection;
+use ActiveLAMP\TaxonomyBundle\Entity\SingularVocabularyField;
 use ActiveLAMP\TaxonomyBundle\Entity\Vocabulary;
-use ActiveLAMP\TaxonomyBundle\Entity\VocabularyField;
+use ActiveLAMP\TaxonomyBundle\Entity\MultipleVocabularyField;
+use ActiveLAMP\TaxonomyBundle\Entity\VocabularyFieldInterface;
 use ActiveLAMP\TaxonomyBundle\Metadata\TaxonomyMetadata;
 use Doctrine\ORM\EntityManager;
 
@@ -156,7 +158,16 @@ class TaxonomyService
 
         $mods = 0;
 
-        foreach ($fields as $field) {
+        foreach ($metadata->getVocabularies() as $vocabMetadata) {
+
+            $field = $vocabMetadata->extractValueInField($entity);
+
+            if (!$field instanceof VocabularyFieldInterface) {
+                $this->loadVocabularyField($entity, $vocabMetadata->getName());
+                $field = $vocabMetadata->extractValueInField($entity);
+            } elseif (!$field->isInitialized()) {
+                $field->initialize();
+            }
 
             $inserts = $field->getInsertDiff();
             $deletes = $field->getDeleteDiff();
@@ -172,11 +183,86 @@ class TaxonomyService
                 $this->em->remove($eTerm);
                 $mods++;
             }
+
+        }
+
+        foreach ($fields as $field) {
+
+
         }
 
         if ($mods > 0 && $persist) {
             $this->em->flush();
         }
+
+    }
+
+    /**
+     * @param $entity
+     * @param $vocabulary
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
+     */
+    public function loadVocabularyField($entity, $vocabulary)
+    {
+
+        if (is_string($vocabulary)) {
+            $vocabularyStr = $vocabulary;
+        } elseif ($vocabulary instanceof Vocabulary) {
+            $vocabularyStr = $vocabulary->getName();
+        } else {
+            throw new \InvalidArgumentException(sprintf(
+                'Expected string or instance of Entity\Vocabulary. "%s" given.',
+                is_object($vocabulary) ? get_class($vocabulary) : gettype($vocabulary)
+            ));
+        }
+
+        $metadata = $this->metadata->getEntityMetadata($entity);
+
+        $vocabularyMetadata = $metadata->getVocabularyByName($vocabularyStr);
+
+        $previous = $vocabularyMetadata->extractValueInField($entity);
+
+        /** @var $vocabulary Vocabulary */
+        if (!$vocabulary instanceof Vocabulary) {
+
+             $vocabulary = $this->em
+                ->getRepository('ALTaxonomyBundle:Vocabulary')
+                ->findOneBy(array('name' => $vocabularyMetadata->getName()));
+
+            if (!$vocabulary) {
+                throw new \RuntimeException(
+                    sprintf(
+                        'Cannot find "%s" vocabulary. Cannot link to %s::%s',
+                        $vocabularyMetadata->getName(),
+                        $metadata->getReflectionClass()->getName(),
+                        $vocabularyMetadata->getReflectionProperty()->getName()
+                    ));
+            }
+        }
+
+        if ($vocabularyMetadata->isSingular()) {
+            $vocabularyField =
+                new SingularVocabularyField(
+                    $vocabulary,
+                    $this->em,
+                    $metadata,
+                    $metadata->extractIdentifier($entity),
+                    $previous
+                );
+        } else {
+            $vocabularyField =
+                new MultipleVocabularyField(
+                    $vocabulary,
+                    $this->em,
+                    $metadata,
+                    $metadata->extractIdentifier($entity),
+                    $previous
+                );
+        }
+
+        $vocabularyMetadata->setVocabularyField($vocabularyField, $entity);
+
 
     }
 
@@ -189,44 +275,8 @@ class TaxonomyService
         $metadata = $this->metadata->getEntityMetadata($entity);
 
         foreach ($metadata->getVocabularies() as $vocabularyMetadata) {
-
-            $field = $vocabularyMetadata->extractValueInField($entity);
-
-            $coll = null;
-
-            if ($field !== null) {
-                $coll = $field;
-            }
-
-            $reflectionProperty = $vocabularyMetadata->getReflectionProperty();
-
-            /** @var $vocabulary Vocabulary */
-            $vocabulary = $this->em
-                               ->getRepository('ALTaxonomyBundle:Vocabulary')
-                               ->findOneBy(array('name' => $vocabularyMetadata->getName()));
-
-            if (!$vocabulary) {
-                throw new \RuntimeException(
-                    sprintf(
-                        'Cannot find "%s" vocabulary. Cannot link to %s::%s',
-                        $vocabularyMetadata->getName(),
-                        $metadata->getReflectionClass()->getName(),
-                        $reflectionProperty->getName()
-                    ));
-            }
-
-            $vocabularyField =
-                new VocabularyField(
-                    $vocabulary,
-                    $this->em,
-                    $metadata,
-                    $metadata->extractIdentifier($entity),
-                    $coll
-                );
-
-            $reflectionProperty->setAccessible(true);
-            $reflectionProperty->setValue($entity, $vocabularyField);
-            $reflectionProperty->setAccessible(false);
+            $this->loadVocabularyField($entity, $vocabularyMetadata->getName());
         }
+
     }
 }

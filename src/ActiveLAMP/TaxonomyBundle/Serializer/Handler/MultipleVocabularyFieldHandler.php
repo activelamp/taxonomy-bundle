@@ -7,7 +7,7 @@
  */
 
 namespace ActiveLAMP\TaxonomyBundle\Serializer\Handler;
-use ActiveLAMP\TaxonomyBundle\Entity\VocabularyField;
+use ActiveLAMP\TaxonomyBundle\Entity\MultipleVocabularyField;
 use ActiveLAMP\TaxonomyBundle\Metadata\TaxonomyMetadata;
 use ActiveLAMP\TaxonomyBundle\Serializer\ArraySerializer;
 use ActiveLAMP\TaxonomyBundle\Serializer\SerializerInterface;
@@ -21,12 +21,12 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 
 /**
- * Class VocabularyFieldHandler
+ * Class MultipleVocabularyFieldHandler
  *
  * @package ActiveLAMP\TaxonomyBundle\Serializer\Handler
  * @author Bez Hermoso <bez@activelamp.com>
  */
-class VocabularyFieldHandler implements SubscribingHandlerInterface
+class MultipleVocabularyFieldHandler implements SubscribingHandlerInterface
 {
     /**
      * @var SerializerInterface
@@ -73,13 +73,13 @@ class VocabularyFieldHandler implements SubscribingHandlerInterface
             array(
                 'direction' => GraphNavigator::DIRECTION_SERIALIZATION,
                 'format' => 'json',
-                'type' => 'ActiveLAMP\\TaxonomyBundle\\Entity\\VocabularyField',
+                'type' => 'ActiveLAMP\\TaxonomyBundle\\Entity\\MultipleVocabularyField',
                 'method' => 'serializeVocabularyFieldToJson',
             ),
             array(
                 'direction' => GraphNavigator::DIRECTION_DESERIALIZATION,
                 'format' => 'json',
-                'type' => 'ActiveLAMP\\TaxonomyBundle\\Entity\\VocabularyField',
+                'type' => 'ActiveLAMP\\TaxonomyBundle\\Entity\\MultipleVocabularyField',
                 'method' => 'deserializeVocabularyFieldFromJson',
             ),
         );
@@ -92,16 +92,16 @@ class VocabularyFieldHandler implements SubscribingHandlerInterface
         Context $context
     ) {
 
-        if (!$field instanceof VocabularyField && $field instanceof \Traversable) {
+        if (!$field instanceof MultipleVocabularyField && $field instanceof \Traversable) {
             return iterator_to_array($field);
         }
 
-        if ($field instanceof VocabularyField) {
+        if ($field instanceof MultipleVocabularyField) {
             $serialized = $this->serializer->serializeTerms($field->getTerms());
             return $serialized;
         }
 
-        throw new \InvalidArgumentException("Cannot serialize. Expected VocabularyField or Traversable containing Terms.");
+        throw new \InvalidArgumentException("Cannot serialize. Expected MultipleVocabularyField or Traversable containing Terms.");
     }
 
     public function deserializeVocabularyFieldFromJson(

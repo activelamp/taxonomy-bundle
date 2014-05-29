@@ -64,7 +64,7 @@ class AnnotationReader implements ReaderInterface
                         ));
                 }
 
-                $vocabulary = new TaxMetadata\Vocabulary($property, $vocab->getName());
+                $vocabulary = new TaxMetadata\Vocabulary($property, $vocab->getName(), $vocab->isSingular());
                 $metadata->addVocabulary($vocabulary);
             }
         }

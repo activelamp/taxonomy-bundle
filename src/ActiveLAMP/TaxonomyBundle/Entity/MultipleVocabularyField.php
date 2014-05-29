@@ -13,16 +13,17 @@ use Closure;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\UnitOfWork;
 use Traversable;
 
 
 /**
- * Class VocabularyField
+ * Class MultipleVocabularyField
  *
  * @package ActiveLAMP\TaxonomyBundle\Entity
  * @author Bez Hermoso <bez@activelamp.com>
  */
-class VocabularyField implements Collection
+class MultipleVocabularyField implements VocabularyFieldInterface, Collection
 {
     /**
      * @var Term[]
@@ -81,7 +82,7 @@ class VocabularyField implements Collection
         return $this->vocabulary;
     }
 
-    protected function initialize()
+    public function initialize()
     {
         if ($this->initialized) {
             return;
@@ -164,6 +165,10 @@ class VocabularyField implements Collection
                 __NAMESPACE__ . '\\Term',
                 get_class($element)
             ));
+        }
+
+        if ($this->em->getUnitOfWork()->getEntityState($element) == UnitOfWork::STATE_DETACHED) {
+            $element = $this->em->merge($element);
         }
 
         if ($element->getVocabulary() !== $this->vocabulary) {
@@ -629,5 +634,13 @@ class VocabularyField implements Collection
         foreach ($values as $value) {
             $this->add($value);
         }
+    }
+
+    /**
+     * @return bool
+     */
+    public function isInitialized()
+    {
+        return (boolean) $this->initialized;
     }
 }

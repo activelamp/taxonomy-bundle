@@ -7,7 +7,7 @@
  */
 
 namespace ActiveLAMP\TaxonomyBundle\Metadata;
-use ActiveLAMP\TaxonomyBundle\Entity\VocabularyField;
+use ActiveLAMP\TaxonomyBundle\Entity\MultipleVocabularyField;
 
 
 /**
@@ -151,7 +151,7 @@ class Entity
 
     /**
      * @param $entity
-     * @return array|VocabularyField[]
+     * @return array|MultipleVocabularyField[]
      */
     public function extractVocabularyFields($entity)
     {
