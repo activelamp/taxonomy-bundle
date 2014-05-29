@@ -204,6 +204,7 @@ class TermController extends Controller
         }
 
         return array(
+            'vocabulary_id' => $vocabulary_id,
             'entity'      => $entity,
             'edit_form'   => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),

@@ -69,7 +69,7 @@ class TaxonomyService
      * @param $name
      * @return Vocabulary
      */
-    public function findVocabulary($name)
+    public function findVocabularyByName($name)
     {
         return $this->em->getRepository('ALTaxonomyBundle:Vocabulary')->findOneBy(array(
             'name' => $name
@@ -83,7 +83,7 @@ class TaxonomyService
     public function findTermsInVocabulary($vocabulary)
     {
         if (is_string($vocabulary)) {
-            $vocabulary = $this->findVocabulary($vocabulary);
+            $vocabulary = $this->findVocabularyByName($vocabulary);
         }
 
         return $this->em->getRepository('ALTaxonomyBundle:Term')->findBy(array(

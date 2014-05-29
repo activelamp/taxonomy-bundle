@@ -68,11 +68,7 @@ class ArraySerializer
                 ));
             }
 
-            $termData[] = array(
-                'id' => $term->getId(),
-                'name' => $term->getName(),
-                'weight' => $term->getWeight(),
-            );
+            $termData[] = $this->serializeTerm($term);
         }
 
         return $termData;
@@ -183,6 +179,7 @@ class ArraySerializer
         return array(
             'id' => $term->getId(),
             'name' => $term->getName(),
+            'label' => $term->getLabelName(),
             'weight' => $term->getWeight(),
         );
     }

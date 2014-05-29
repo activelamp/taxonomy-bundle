@@ -20,34 +20,34 @@ class Term
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
-    private $id;
+    protected $id;
 
     /**
      * @ORM\ManyToOne(targetEntity="ActiveLAMP\TaxonomyBundle\Entity\Vocabulary", inversedBy="terms")
      * @ORM\JoinColumn(name="vocabulary_id", referencedColumnName="id", onDelete="CASCADE")
      */
-    private $vocabulary;
+    protected $vocabulary;
 
     /**
      * @var string
      *
      * @ORM\Column(name="name", type="string", length=255, unique=true)
      */
-    private $name;
+    protected $name;
 
     /**
      * @var string
      *
      * @ORM\Column(name="label", type="string", length=255)
      */
-    private $label;
+    protected $label;
 
     /**
      * @var integer
      *
      * @ORM\Column(name="weight", type="integer")
      */
-    private $weight;
+    protected $weight;
 
     /**
      * @var array|EntityTerm[]
@@ -70,6 +70,13 @@ class Term
     public function getId()
     {
         return $this->id;
+    }
+
+    public function setId($id)
+    {
+        $this->id = $id;
+
+        return $this;
     }
 
     /**
@@ -147,6 +154,13 @@ class Term
     public function getLabelName()
     {
         return $this->label;
+    }
+
+    public function setLabelName($label)
+    {
+        $this->label = $label;
+
+        return $this;
     }
 
     /**

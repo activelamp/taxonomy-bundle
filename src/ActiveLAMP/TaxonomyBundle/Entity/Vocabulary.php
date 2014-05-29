@@ -44,6 +44,7 @@ class Vocabulary
     private $description;
 
     /**
+     * @var ArrayCollection|Term[]
      * @ORM\OneToMany(targetEntity="ActiveLAMP\TaxonomyBundle\Entity\Term", mappedBy="vocabulary")
      */
     private $terms;
@@ -135,5 +136,22 @@ class Vocabulary
     function __toString()
     {
         return $this->getName();
+    }
+
+    /**
+     * @param $name
+     * @throws \DomainException
+     * @return Term
+     */
+    public function getTermByName($name)
+    {
+        /** @var $term Term */
+        foreach ($this->terms as $term) {
+            if ($term->getName() == $name) {
+                return $term;
+            }
+        }
+
+        throw new \DomainException(sprintf('Cannot find term of name "%s".', $name));
     }
 }
