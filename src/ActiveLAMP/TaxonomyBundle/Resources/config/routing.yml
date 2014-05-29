@@ -1,0 +1,3 @@
+al_taxonomy_ctrls:
+    resource: "@ALTaxonomyBundle/Controller/"
+    type: annotation

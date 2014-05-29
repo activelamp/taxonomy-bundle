@@ -34,7 +34,7 @@
 {% endblock %}
 
 {% block taxonomy_actions -%}
-        <li><a href="{{ path('admin_structure_vocabulary-list_edit', { 'id': entity.id }) }}" class="btn btn-primary">Edit</a></li>
+        <li><a href="{{ path('al_taxonomy_edit_vocabulary', { 'id': entity.id }) }}" class="btn btn-primary">Edit</a></li>
         <li>{{ form(delete_form) }}</li>
-        <li><a href="{{ path('admin_structure_vocabulary-list') }}" class="btn btn-default">View Vocabularies</a></li>
+        <li><a href="{{ path('al_taxonomy_list_vocabularies') }}" class="btn btn-default">View Vocabularies</a></li>
 {% endblock %}

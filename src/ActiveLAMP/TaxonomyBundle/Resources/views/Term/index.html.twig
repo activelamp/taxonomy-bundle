@@ -8,7 +8,8 @@
             <thead>
             <tr>
                 <th>Id</th>
-                <th>Name</th>
+                <th>Machine name</th>
+                <th>Label name</th>
                 <th>Weight</th>
                 <th>Actions</th>
             </tr>
@@ -16,18 +17,19 @@
             <tbody>
             {% for entity in entities %}
                 <tr>
-                    <td><a href="{{ path('admin_structure_taxonomy_term_show', { 'id': entity.id, 'vocabulary_id': vocabulary.id }) }}">{{ entity.id }}</a></td>
+                    <td><a href="{{ path('al_taxonomy_show_term', { 'id': entity.id, 'vocabulary_id': vocabulary.id }) }}">{{ entity.id }}</a></td>
                     <td>{{ entity.name }}</td>
+                    <td>{{ entity.labelName }}</td>
                     <td>{{ entity.weight }}</td>
                     <td>
                         <div class="btn-group">
-                            <a href="{{ path('admin_structure_taxonomy_term_show', { 'id': entity.id, 'vocabulary_id': vocabulary.id }) }}" class="btn btn-default">View</a>
+                            <a href="{{ path('al_taxonomy_show_term', { 'id': entity.id, 'vocabulary_id': vocabulary.id }) }}" class="btn btn-default">View</a>
                             <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
                                 <span class="caret"></span>
                             </button>
                             <ul class="dropdown-menu" role="menu">
                                 <li>
-                                    <a href="{{ path('admin_structure_taxonomy_term_edit', { 'id': entity.id, 'vocabulary_id': vocabulary.id }) }}">Edit</a>
+                                    <a href="{{ path('al_taxonomy_edit_term', { 'id': entity.id, 'vocabulary_id': vocabulary.id }) }}">Edit</a>
                                 </li>
                             </ul>
                         </div>
@@ -49,9 +51,9 @@
 
 {% block taxonomy_actions %}
     <li>
-        <a href="{{ path('admin_structure_taxonomy_term_new', {'vocabulary_id': vocabulary.id }) }}" class="btn btn-primary">
+        <a href="{{ path('al_taxonomy_new_term', {'vocabulary_id': vocabulary.id }) }}" class="btn btn-primary">
             Add Term
         </a>
     </li>
-    <li><a href="{{ path('admin_structure_vocabulary-list') }}" class="btn btn-default">View Vocabularies</a></li>
+    <li><a href="{{ path('al_taxonomy_list_vocabularies') }}" class="btn btn-default">View Vocabularies</a></li>
 {% endblock %}

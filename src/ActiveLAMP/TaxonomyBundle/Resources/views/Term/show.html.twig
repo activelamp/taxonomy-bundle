@@ -28,13 +28,13 @@
 {% block taxonomy_actions -%}
 
     <li>
-        <a href="{{ path('admin_structure_taxonomy_term_edit', { 'id': entity.id, 'vocabulary_id': vocabulary_id }) }}" class="btn btn-primary">
+        <a href="{{ path('al_taxonomy_edit_term', { 'id': entity.id, 'vocabulary_id': vocabulary_id }) }}" class="btn btn-primary">
             Edit
         </a>
     </li>
     <li>{{ form(delete_form) }}</li>
     <li>
-        <a href="{{ path('admin_structure_taxonomy_term', { 'vocabulary_id': vocabulary_id }) }}" class="btn btn-default">
+        <a href="{{ path('al_taxonomy_list_terms', { 'vocabulary_id': vocabulary_id }) }}" class="btn btn-default">
             Back to the list
         </a>
     </li>

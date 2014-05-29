@@ -17,22 +17,22 @@
             <tbody>
             {% for entity in entities %}
                 <tr>
-                    <td><a href="{{ path('admin_structure_vocabulary-list_show', { 'id': entity.id }) }}">{{ entity.id }}</a></td>
+                    <td><a href="{{ path('al_taxonomy_show_vocabulary', { 'id': entity.id }) }}">{{ entity.id }}</a></td>
                     <td>{{ entity.labelName }}</td>
                     <td>{{ entity.name }}</td>
                     <td>{{ entity.description }}</td>
                     <td>
                         <div class="btn-group">
-                            <a href="{{ path('admin_structure_vocabulary-list_show', { 'id': entity.id }) }}" class="btn btn-default">View</a>
+                            <a href="{{ path('al_taxonomy_show_vocabulary', { 'id': entity.id }) }}" class="btn btn-default">View</a>
                             <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
                                 <span class="caret"></span>
                             </button>
                             <ul class="dropdown-menu" role="menu">
-                                <li><a href="{{ path('admin_structure_vocabulary-list_edit', { 'id': entity.id }) }}">Edit</a></li>
-                                <li><a href="{{ path('admin_structure_taxonomy_term_new', { 'vocabulary_id': entity.id }) }}">Add Term</a></li>
-                                <li><a href="{{ path('admin_structure_taxonomy_term', { 'vocabulary_id': entity.id }) }}">List Terms</a></li>
+                                <li><a href="{{ path('al_taxonomy_edit_vocabulary', { 'id': entity.id }) }}">Edit</a></li>
+                                <li><a href="{{ path('al_taxonomy_create_term', { 'vocabulary_id': entity.id }) }}">Add Term</a></li>
+                                <li><a href="{{ path('al_taxonomy_list_terms', { 'vocabulary_id': entity.id }) }}">List Terms</a></li>
                                 {# todo: Figure out how to send a DELETE method from link. #}
-                                {#<li><a href="{{ path('admin_structure_vocabulary-list_delete', { 'id': entity.id }) }}">Delete</a></li>#}
+                                {#<li><a href="{{ path('al_taxonomy_delete_vocabulary', { 'id': entity.id }) }}">Delete</a></li>#}
                             </ul>
                         </div>
                     </td>
@@ -49,5 +49,5 @@
 {% endblock %}
 
 {% block taxonomy_actions %}
-<li><a href="{{ path('admin_structure_vocabulary-list_new') }}" class="btn btn-primary">Create New Vocabulary</a></li>
+<li><a href="{{ path('al_taxonomy_create_vocabulary') }}" class="btn btn-primary">Create New Vocabulary</a></li>
 {% endblock %}
