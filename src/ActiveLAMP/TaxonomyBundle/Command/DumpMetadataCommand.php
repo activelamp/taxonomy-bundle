@@ -54,9 +54,15 @@ class DumpMetadataCommand extends ContainerAwareCommand
         $lines = array();
 
         foreach ($metadatas as $entity) {
-            $lines[] = $entity->getReflectionClass()->getName() . ':';
+            $lines[] = sprintf('<info>%s</info>', $entity->getReflectionClass()->getName());
+            $lines[] = sprintf('Type: <comment>%s</comment>', $entity->getType() == $entity->getReflectionClass()->getName() ? '(The entity\'s FQCN)' : $entity->getType());
+            $lines[] = '';
             foreach ($entity->getVocabularies() as $vocabulary) {
-                $lines[] = sprintf('    $%s => \'%s\'', $vocabulary->getFieldName(), $vocabulary->getName());
+                $lines[] = sprintf('    <info>$%s</info>:', $vocabulary->getFieldName());
+                $lines[] = sprintf('        vocabulary: <comment>%s</comment>', $vocabulary->getName());
+                $lines[] = sprintf('        singular: <comment>%s</comment>', $vocabulary->isSingular() ? 'true' : 'false');
+                $lines[] = '';
+
             }
             $lines[] = '';
         }
