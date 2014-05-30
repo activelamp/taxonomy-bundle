@@ -18,12 +18,12 @@ use Traversable;
 
 
 /**
- * Class MultipleVocabularyField
+ * Class PluralVocabularyField
  *
  * @package ActiveLAMP\TaxonomyBundle\Entity
  * @author Bez Hermoso <bez@activelamp.com>
  */
-class MultipleVocabularyField implements VocabularyFieldInterface, Collection
+class PluralVocabularyField implements VocabularyFieldInterface, Collection
 {
     /**
      * @var Term[]

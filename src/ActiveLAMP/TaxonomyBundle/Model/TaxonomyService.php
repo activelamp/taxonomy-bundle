@@ -12,7 +12,7 @@ use ActiveLAMP\TaxonomyBundle\Entity\EntityTerm;
 use ActiveLAMP\TaxonomyBundle\Collection\RelatedEntityCollection;
 use ActiveLAMP\TaxonomyBundle\Entity\SingularVocabularyField;
 use ActiveLAMP\TaxonomyBundle\Entity\Vocabulary;
-use ActiveLAMP\TaxonomyBundle\Entity\MultipleVocabularyField;
+use ActiveLAMP\TaxonomyBundle\Entity\PluralVocabularyField;
 use ActiveLAMP\TaxonomyBundle\Entity\VocabularyFieldInterface;
 use ActiveLAMP\TaxonomyBundle\Metadata\TaxonomyMetadata;
 use Doctrine\ORM\EntityManager;
@@ -219,6 +219,10 @@ class TaxonomyService
 
         $previous = $vocabularyMetadata->extractValueInField($entity);
 
+        if ($previous instanceof VocabularyFieldInterface) {
+            return;
+        }
+
         /** @var $vocabulary Vocabulary */
         if (!$vocabulary instanceof Vocabulary) {
 
@@ -248,7 +252,7 @@ class TaxonomyService
                 );
         } else {
             $vocabularyField =
-                new MultipleVocabularyField(
+                new PluralVocabularyField(
                     $vocabulary,
                     $this->em,
                     $metadata,

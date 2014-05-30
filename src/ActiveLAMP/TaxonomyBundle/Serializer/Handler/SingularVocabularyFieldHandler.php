@@ -18,7 +18,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 
 /**
- * Class MultipleVocabularyFieldHandler
+ * Class PluralVocabularyFieldHandler
  *
  * @package ActiveLAMP\TaxonomyBundle\Serializer\Handler
  * @author Bez Hermoso <bez@activelamp.com>

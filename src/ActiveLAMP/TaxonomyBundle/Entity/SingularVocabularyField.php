@@ -102,6 +102,7 @@ class SingularVocabularyField extends Term implements VocabularyFieldInterface
         }
 
         $previous = null;
+
         if ($this->entityTerm !== null) {
             $previous = $this->entityTerm;
         }
@@ -155,6 +156,13 @@ class SingularVocabularyField extends Term implements VocabularyFieldInterface
     public function setTerm($term = null)
     {
 
+        $this->initialize();
+
+        if (null === $term) {
+            $this->entityTerm = null;
+            return;
+        }
+
         if (!$term instanceof Term) {
             throw new \InvalidArgumentException(sprintf(
                 'Expected instance of Term. "%s" given.',
@@ -174,8 +182,6 @@ class SingularVocabularyField extends Term implements VocabularyFieldInterface
                 $this->vocabulary->getName()
             ));
         }
-
-        $this->initialize();
 
         if ($this->entityTerm && $this->entityTerm->getTerm() === $term) {
             return $this;
@@ -229,7 +235,7 @@ class SingularVocabularyField extends Term implements VocabularyFieldInterface
         return $this->getTerm() ? $this->getTerm()->getWeight() : null;
     }
 
-    public function setVocabulary(\ActiveLAMP\TaxonomyBundle\Entity\Vocabulary $vocabulary = null)
+    public function setVocabulary(Vocabulary $vocabulary = null)
     {
         if (!$this->getTerm()) {
             return $this;

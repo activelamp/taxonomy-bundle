@@ -2,25 +2,33 @@
 /**
  * Created by PhpStorm.
  * User: bezalelhermoso
- * Date: 5/23/14
- * Time: 2:52 PM
+ * Date: 5/30/14
+ * Time: 10:54 AM
  */
 
 namespace ActiveLAMP\TaxonomyBundle\Form\DataTransformer;
+use ActiveLAMP\TaxonomyBundle\Entity\SingularVocabularyField;
 use ActiveLAMP\TaxonomyBundle\Entity\Term;
-use ActiveLAMP\TaxonomyBundle\Entity\MultipleVocabularyField;
+use ActiveLAMP\TaxonomyBundle\Entity\Vocabulary;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Exception\TransformationFailedException;
 
 
 /**
- * Class VocabularyFieldTransformer
+ * Class SingularVocabularyFieldTransformer
  *
  * @package ActiveLAMP\TaxonomyBundle\Form\DataTransformer
  * @author Bez Hermoso <bez@activelamp.com>
  */
-class VocabularyFieldTransformer implements DataTransformerInterface
+class SingularVocabularyFieldTransformer implements DataTransformerInterface
 {
+
+    protected $vocabulary;
+
+    public function __construct(Vocabulary $vocabulary)
+    {
+        $this->vocabulary = $vocabulary;
+    }
 
     /**
      * Transforms a value from the original representation to a transformed representation.
@@ -52,20 +60,10 @@ class VocabularyFieldTransformer implements DataTransformerInterface
     public function transform($value)
     {
         if (null === $value) {
-            return '';
+            return "";
         }
 
-        if ($value instanceof MultipleVocabularyField) {
-
-            $values = array();
-
-            /** @var $term Term */
-            foreach ($value as $term) {
-                $values[$term->getId()] = $term->getName();
-            }
-
-            return $value;
-        }
+        return $value->getName();
     }
 
     /**
@@ -94,11 +92,19 @@ class VocabularyFieldTransformer implements DataTransformerInterface
      */
     public function reverseTransform($value)
     {
+
         if (!$value) {
             return null;
         }
 
+        if (!is_string($value)) {
+            throw new TransformationFailedException(sprintf('Expected string. "%s" given.', gettype($value)));
+        }
 
-
+        try {
+            return $this->vocabulary->getTermByName($value);
+        } catch (\Exception $e) {
+            throw new TransformationFailedException($e->getMessage());
+        }
     }
 }

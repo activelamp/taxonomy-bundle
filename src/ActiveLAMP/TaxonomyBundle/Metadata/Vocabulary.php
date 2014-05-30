@@ -7,7 +7,7 @@
  */
 
 namespace ActiveLAMP\TaxonomyBundle\Metadata;
-use ActiveLAMP\TaxonomyBundle\Entity\MultipleVocabularyField;
+use ActiveLAMP\TaxonomyBundle\Entity\PluralVocabularyField;
 use Doctrine\Common\Collections\ArrayCollection;
 
 
@@ -68,7 +68,7 @@ class Vocabulary
 
     /**
      * @param $entity
-     * @return MultipleVocabularyField|ArrayCollection
+     * @return PluralVocabularyField|ArrayCollection
      */
     public function extractValueInField($entity)
     {

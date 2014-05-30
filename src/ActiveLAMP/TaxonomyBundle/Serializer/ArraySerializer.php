@@ -8,7 +8,7 @@
 
 namespace ActiveLAMP\TaxonomyBundle\Serializer;
 use ActiveLAMP\TaxonomyBundle\Entity\Term;
-use ActiveLAMP\TaxonomyBundle\Entity\MultipleVocabularyField;
+use ActiveLAMP\TaxonomyBundle\Entity\PluralVocabularyField;
 use ActiveLAMP\TaxonomyBundle\Metadata\TaxonomyMetadata;
 use ActiveLAMP\TaxonomyBundle\Model\TaxonomyService;
 
@@ -75,7 +75,7 @@ class ArraySerializer
     }
 
 
-    public function serializeField(MultipleVocabularyField $field)
+    public function serializeField(PluralVocabularyField $field)
     {
         $vocabulary = $field->getVocabulary();
         $vocabData = array(

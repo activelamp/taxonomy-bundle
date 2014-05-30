@@ -1,0 +1,7 @@
+services:
+    al_taxonomy.form_type.singular_vocabulary_field:
+        class: ActiveLAMP\TaxonomyBundle\Form\SingularVocabularyFieldType
+        arguments:
+            - @al_taxonomy.taxonomy_service
+        tags:
+            - { name: form.type, alias: singular_vocabulary_field }

@@ -70,7 +70,7 @@ class ListVocabularyCommand extends ContainerAwareCommand
             $vocabulary->getName());
 
         if (count($terms) == 0) {
-            $lines[] = '   No terms found.';
+            $lines[] = 'No terms found.';
         } else {
             $lines[] = sprintf('%d terms found:', count($terms));
         }
@@ -79,8 +79,8 @@ class ListVocabularyCommand extends ContainerAwareCommand
             $lines[] = sprintf('    <info>%s:</info>', $term->getName());
             $lines[] = sprintf('        label: <comment>"%s"</comment>', $term->getLabelName());
             $lines[] = sprintf('        weight: <comment>%d</comment>', $term->getWeight());
-            $lines[] = '';
         }
+        $lines[] = '';
 
         $output->writeln($lines);
     }
