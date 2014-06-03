@@ -11,10 +11,12 @@ use ActiveLAMP\TaxonomyBundle\Doctrine\QueryInjector;
 use ActiveLAMP\TaxonomyBundle\Entity\EntityTerm;
 use ActiveLAMP\TaxonomyBundle\Collection\RelatedEntityCollection;
 use ActiveLAMP\TaxonomyBundle\Entity\SingularVocabularyField;
+use ActiveLAMP\TaxonomyBundle\Entity\Term;
 use ActiveLAMP\TaxonomyBundle\Entity\Vocabulary;
 use ActiveLAMP\TaxonomyBundle\Entity\PluralVocabularyField;
 use ActiveLAMP\TaxonomyBundle\Entity\VocabularyFieldInterface;
 use ActiveLAMP\TaxonomyBundle\Metadata\TaxonomyMetadata;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManager;
 
 
@@ -78,17 +80,18 @@ class TaxonomyService
 
     /**
      * @param $vocabulary
-     * @return \ActiveLAMP\TaxonomyBundle\Entity\Term[]|array
+     * @return \ActiveLAMP\TaxonomyBundle\Entity\Term[]|ArrayCollection
      */
     public function findTermsInVocabulary($vocabulary)
     {
         if (is_string($vocabulary)) {
             $vocabulary = $this->findVocabularyByName($vocabulary);
         }
-
-        return $this->em->getRepository('ALTaxonomyBundle:Term')->findBy(array(
+        $terms = $this->em->getRepository('ALTaxonomyBundle:Term')->findBy(array(
             'vocabulary' => $vocabulary
         ));
+
+        return new ArrayCollection($terms);
     }
 
     /**
@@ -98,6 +101,17 @@ class TaxonomyService
     public function findTermById($id)
     {
         return $this->em->getRepository('ALTaxonomyBundle:Term')->find($id);
+    }
+
+    /**
+     * @param $name
+     * @return \ActiveLAMP\TaxonomyBundle\Entity\Term
+     */
+    public function findTermByName($name)
+    {
+        return $this->em->getRepository('ALTaxonomyBundle:Term')->findOneBy(array(
+            'name' => $name,
+        ));
     }
 
     public function findTermsByIds(array $ids)
@@ -113,6 +127,36 @@ class TaxonomyService
         $qb->andWhere($qb->expr()->in('t.id', $ids));
 
         return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @param Term $term
+     * @param bool $flush
+     */
+    public function deleteTerm(Term $term, $flush = true)
+    {
+        $this->em->remove($term);
+        if ($flush === true) {
+            $this->em->flush();
+        }
+    }
+
+    /**
+     * @param Term $term
+     * @param bool $flush
+     * @throws \DomainException
+     */
+    public function saveTerm(Term $term, $flush = true)
+    {
+        if (!$term->getVocabulary()) {
+            throw new \DomainException('Term must be assigned to a vocabulary before persisting it.');
+        }
+
+        $this->em->persist($term);
+
+        if ($flush === true) {
+            $this->em->flush();
+        }
     }
 
     /**
@@ -278,5 +322,14 @@ class TaxonomyService
             $this->loadVocabularyField($entity, $vocabularyMetadata->getName());
         }
 
+    }
+
+    public function saveVocabulary(Vocabulary $vocabulary, $flush = true)
+    {
+        $this->em->persist($vocabulary);
+
+        if ($flush === true) {
+            $this->em->flush();
+        }
     }
 }

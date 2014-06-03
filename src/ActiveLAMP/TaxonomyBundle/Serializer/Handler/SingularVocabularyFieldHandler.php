@@ -105,8 +105,18 @@ class SingularVocabularyFieldHandler implements SubscribingHandlerInterface
         array $type,
         Context $context
     ) {
-        if ($value !== null) {
+
+        if ($value === null) {
+            return null;
+        }
+
+        if (is_array($value)) {
             return $this->serializer->deserializeTerm($value);
+        }
+
+        if (is_string($value)) {
+            $service = $this->container->get('al_taxonomy.taxonomy_service');
+            return $service->findTermByName($value);
         }
     }
 }

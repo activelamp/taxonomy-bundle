@@ -4,6 +4,7 @@ namespace ActiveLAMP\TaxonomyBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Traversable;
 
 /**
  * Vocabulary
@@ -45,7 +46,7 @@ class Vocabulary
 
     /**
      * @var ArrayCollection|Term[]
-     * @ORM\OneToMany(targetEntity="ActiveLAMP\TaxonomyBundle\Entity\Term", mappedBy="vocabulary")
+     * @ORM\OneToMany(targetEntity="ActiveLAMP\TaxonomyBundle\Entity\Term", mappedBy="vocabulary", cascade={"remove"})
      */
     private $terms;
 

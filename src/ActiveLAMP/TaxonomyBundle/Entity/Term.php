@@ -24,7 +24,6 @@ class Term
 
     /**
      * @ORM\ManyToOne(targetEntity="ActiveLAMP\TaxonomyBundle\Entity\Vocabulary", inversedBy="terms")
-     * @ORM\JoinColumn(name="vocabulary_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $vocabulary;
 
@@ -51,7 +50,7 @@ class Term
 
     /**
      * @var array|EntityTerm[]
-     * @ORM\OneToMany(targetEntity="ActiveLAMP\TaxonomyBundle\Entity\EntityTerm", mappedBy="term")
+     * @ORM\OneToMany(targetEntity="ActiveLAMP\TaxonomyBundle\Entity\EntityTerm", mappedBy="term", cascade={"remove"})
      */
     protected $entityTerms;
 

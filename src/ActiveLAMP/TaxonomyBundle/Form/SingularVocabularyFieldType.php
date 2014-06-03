@@ -23,17 +23,14 @@ class SingularVocabularyFieldType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $transformer = new SingularVocabularyFieldTransformer($options['vocabulary']);
+        $transformer = new SingularVocabularyFieldTransformer($options['taxonomy_service']);
         $builder->addModelTransformer($transformer);
     }
 
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setRequired(array(
-            'vocabulary'
-        ))
-        ->setAllowedTypes(array(
-            'vocabulary' => 'ActiveLAMP\\TaxonomyBundle\\Entity\\Vocabulary'
+            'taxonomy_service'
         ))
         ->setDefaults(array(
             'invalid_message' => 'Invalid vocabulary term value.'

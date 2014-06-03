@@ -10,6 +10,7 @@ namespace ActiveLAMP\TaxonomyBundle\Form\DataTransformer;
 use ActiveLAMP\TaxonomyBundle\Entity\SingularVocabularyField;
 use ActiveLAMP\TaxonomyBundle\Entity\Term;
 use ActiveLAMP\TaxonomyBundle\Entity\Vocabulary;
+use ActiveLAMP\TaxonomyBundle\Model\TaxonomyService;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Exception\TransformationFailedException;
 
@@ -23,11 +24,11 @@ use Symfony\Component\Form\Exception\TransformationFailedException;
 class SingularVocabularyFieldTransformer implements DataTransformerInterface
 {
 
-    protected $vocabulary;
+    protected $service;
 
-    public function __construct(Vocabulary $vocabulary)
+    public function __construct(TaxonomyService $service)
     {
-        $this->vocabulary = $vocabulary;
+        $this->service = $service;
     }
 
     /**
@@ -101,10 +102,12 @@ class SingularVocabularyFieldTransformer implements DataTransformerInterface
             throw new TransformationFailedException(sprintf('Expected string. "%s" given.', gettype($value)));
         }
 
-        try {
-            return $this->vocabulary->getTermByName($value);
-        } catch (\Exception $e) {
-            throw new TransformationFailedException($e->getMessage());
+        $term = $this->service->findTermByName($value);
+
+        if (!$term) {
+            throw new TransformationFailedException('Cannot find term.');
         }
+
+        return $term;
     }
 }
