@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
  * Options
  *
  * @ORM\Table(name="taxonomy_term")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="ActiveLAMP\TaxonomyBundle\Entity\Repository\TermRepository")
  */
 class Term
 {

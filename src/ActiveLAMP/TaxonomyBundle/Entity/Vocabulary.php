@@ -10,7 +10,7 @@ use Traversable;
  * Vocabulary
  *
  * @ORM\Table(name="taxonomy_vocabulary")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="ActiveLAMP\TaxonomyBundle\Entity\Repository\VocabularyRepository")
  */
 class Vocabulary
 {

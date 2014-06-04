@@ -158,19 +158,16 @@ class ArraySerializer
     public function deserializeTerms(array $terms)
     {
         $termIds = array();
+        $terms = array();
         foreach ($terms as $i => $termData) {
             if (!isset($termData['id'])) {
                 throw new \OutOfBoundsException('Cannot find "id" attribute of term item on index ' . $i);
             }
-            $termIds[] = $termData['id'];
+
+            $terms[] = $this->getTaxonomyService()->findTermById($termData['id']);
         }
 
-        if (count($termIds)) {
-            $terms = $this->getTaxonomyService()->findTermsByIds($termIds);
-        } else {
-            $terms = array();
-        }
-
+        $terms = array_filter($terms);
         return $terms;
     }
 

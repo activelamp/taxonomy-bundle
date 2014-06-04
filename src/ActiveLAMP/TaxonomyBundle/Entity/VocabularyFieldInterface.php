@@ -31,14 +31,4 @@ interface VocabularyFieldInterface
      * @return Vocabulary
      */
     public function getVocabulary();
-
-    /**
-     * @return bool
-     */
-    public function isInitialized();
-
-    /**
-     * @return void
-     */
-    public function initialize();
 }

@@ -8,6 +8,7 @@
 
 namespace ActiveLAMP\TaxonomyBundle\Entity;
 use ActiveLAMP\TaxonomyBundle\Metadata\Entity;
+use ActiveLAMP\TaxonomyBundle\Model\EntityTermsFinder;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\UnitOfWork;
@@ -54,19 +55,18 @@ class SingularVocabularyField extends Term implements VocabularyFieldInterface
     protected $initialized = false;
 
     /**
-     * @param Vocabulary $vocabulary
      * @param EntityManager $em
-     * @param Entity $metadata
+     * @param Vocabulary $vocabulary
+     * @param $entityType
      * @param $identifier
-     * @param Term $term
+     * @param null $term
      */
-    public function __construct(Vocabulary $vocabulary, EntityManager $em, Entity $metadata, $identifier, $term = null)
+    public function __construct(EntityManager $em, Vocabulary $vocabulary, $entityType, $identifier, $term = null)
     {
-        $this->vocabulary = $vocabulary;
         $this->em = $em;
-        $this->metadata = $metadata;
-        $this->identifier = $identifier;
         $this->entityTerm = $term;
+        $this->type = $entityType;
+        $this->identifier;
     }
 
     /**
@@ -107,28 +107,10 @@ class SingularVocabularyField extends Term implements VocabularyFieldInterface
             $previous = $this->entityTerm;
         }
 
-        $qb = $this->em->getRepository('ALTaxonomyBundle:EntityTerm')
-                       ->createQueryBuilder('et');
-
-        $qb
-            ->innerJoin('et.term', 't')
-            ->innerJoin('t.vocabulary', 'v')
-            ->addSelect('t')
-            ->andWhere('et.entityType = :type')
-            ->andWhere('et.entityIdentifier = :id')
-            ->andWhere('v.id = :vid')
-            ->orderBy('et.id', 'DESC')
-            ->setParameters(array(
-                'vid' => $this->vocabulary->getId(),
-                'id' => $this->identifier,
-                'type' => $this->metadata->getType(),
-            ))
-            ->setMaxResults(1);
-
-        $entityTerm = $qb->getQuery()->getOneOrNullResult();
+        $finder = new EntityTermsFinder($this->em, $this->vocabulary, $this->type, $this->identifier);
+        $entityTerm = $finder->findOne();
 
         $this->snapshot = $entityTerm;
-
         $this->entityTerm = $entityTerm;
 
         $this->initialized = true;
@@ -160,7 +142,7 @@ class SingularVocabularyField extends Term implements VocabularyFieldInterface
 
         if (null === $term) {
             $this->entityTerm = null;
-            return;
+            return $this;
         }
 
         if (!$term instanceof Term) {

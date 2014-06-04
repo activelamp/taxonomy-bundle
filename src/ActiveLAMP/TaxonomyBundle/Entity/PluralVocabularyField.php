@@ -9,6 +9,7 @@
 namespace ActiveLAMP\TaxonomyBundle\Entity;
 use ActiveLAMP\TaxonomyBundle\Iterator\InnerTermIterator;
 use ActiveLAMP\TaxonomyBundle\Metadata\Entity;
+use ActiveLAMP\TaxonomyBundle\Model\EntityTermsFinder;
 use Closure;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -41,9 +42,9 @@ class PluralVocabularyField implements VocabularyFieldInterface, Collection
     protected $em;
 
     /**
-     * @var \ActiveLAMP\TaxonomyBundle\Metadata\Entity
+     * @var
      */
-    protected $metadata;
+    protected $type;
 
     /**
      * @var mixed
@@ -65,11 +66,15 @@ class PluralVocabularyField implements VocabularyFieldInterface, Collection
      */
     protected $snapshot;
 
-    public function __construct(Vocabulary $vocabulary, EntityManager $em, Entity $metadata, $identifier, $collection = null)
-    {
+    public function __construct(
+        EntityManager $em,
+        Vocabulary $vocabulary,
+        $type, $identifier,
+        Collection $collection = null
+    ) {
         $this->vocabulary = $vocabulary;
         $this->em = $em;
-        $this->metadata = $metadata;
+        $this->type = $type;
         $this->identifier = $identifier;
         $this->collection = $collection;
     }
@@ -93,24 +98,10 @@ class PluralVocabularyField implements VocabularyFieldInterface, Collection
             $unManaged = $this->collection->toArray();
         }
 
-        $eTerms =
-            $this->em
-                ->getRepository('ALTaxonomyBundle:EntityTerm')
-                    ->createQueryBuilder('et')
-                    ->innerJoin('et.term', 't')
-                    ->innerJoin('t.vocabulary', 'v')
-                    ->addSelect('t')
-                    ->andWhere('v.id = :vid')
-                    ->andWhere('et.entityType = :type')
-                    ->andWhere('et.entityIdentifier = :id')
-                    ->setParameters(array(
-                        'vid' => $this->vocabulary->getId(),
-                        'id' => $this->identifier,
-                        'type' => $this->metadata->getType(),
-                    ))->getQuery()->getResult();
+        $finder = new EntityTermsFinder($this->em, $this->vocabulary, $this->type, $this->identifier);
+        $eTerms = $finder->find();
 
         $this->snapshot = $eTerms;
-
         $this->collection = new ArrayCollection($eTerms);
 
         $this->initialized = true;
