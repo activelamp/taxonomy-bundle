@@ -7,6 +7,7 @@
  */
 
 namespace ActiveLAMP\TaxonomyBundle\Model;
+use ActiveLAMP\TaxonomyBundle\Entity\Vocabulary;
 
 
 /**
@@ -17,9 +18,20 @@ namespace ActiveLAMP\TaxonomyBundle\Model;
  */
 interface VocabularyRepositoryInterface
 {
+    /**
+     * @param $id
+     * @return Vocabulary
+     */
     public function findById($id);
 
+    /**
+     * @param $name
+     * @return Vocabulary
+     */
     public function findByName($name);
 
+    /**
+     * @return Vocabulary[]
+     */
     public function findAll();
 }

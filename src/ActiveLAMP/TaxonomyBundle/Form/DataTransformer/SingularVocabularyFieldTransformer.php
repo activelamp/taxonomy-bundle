@@ -26,9 +26,12 @@ class SingularVocabularyFieldTransformer implements DataTransformerInterface
 
     protected $service;
 
-    public function __construct(TaxonomyService $service)
+    protected $vocabulary;
+
+    public function __construct(TaxonomyService $service, $vocabulary)
     {
         $this->service = $service;
+        $this->vocabulary = $vocabulary;
     }
 
     /**
@@ -106,6 +109,15 @@ class SingularVocabularyFieldTransformer implements DataTransformerInterface
 
         if (!$term) {
             throw new TransformationFailedException('Cannot find term.');
+        }
+
+
+        if (is_string($this->vocabulary)
+        && $term->getVocabulary()->getName() !== $this->vocabulary) {
+            throw new TransformationFailedException(sprintf(
+                'Term "%s" does not belong in vocabulary "%s"',
+                $term->getName(),
+                $this->vocabulary));
         }
 
         return $term;

@@ -71,7 +71,7 @@ abstract class AbstractTaxonomyService
 
     /**
      * @param $name
-     * @return mixed
+     * @return Vocabulary
      */
     public function findVocabularyByName($name)
     {

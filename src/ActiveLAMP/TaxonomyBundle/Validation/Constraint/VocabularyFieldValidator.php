@@ -7,7 +7,10 @@
  */
 
 namespace ActiveLAMP\TaxonomyBundle\Validation\Constraint;
+use ActiveLAMP\TaxonomyBundle\Entity\PluralVocabularyField;
+use ActiveLAMP\TaxonomyBundle\Entity\SingularVocabularyField;
 use ActiveLAMP\TaxonomyBundle\Entity\Term;
+use ActiveLAMP\TaxonomyBundle\Entity\VocabularyFieldInterface;
 use ActiveLAMP\TaxonomyBundle\Model\TaxonomyService;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
@@ -39,10 +42,62 @@ class VocabularyFieldValidator extends ConstraintValidator
      */
     public function validate($value, Constraint $constraint)
     {
+        if (!$value) {
+            return;
+        }
+
+        if ($constraint->singular === true) {
+            $this->validateSingular($value, $constraint);
+        } else {
+            $this->validatePlural($value, $constraint);
+        }
+    }
+
+    protected function validateSingular($value, VocabularyField $constraint)
+    {
         /* @var $constraint VocabularyField */
 
+        if ($value instanceof SingularVocabularyField) {
+            $value = $value->getTerm();
+        }
+
+        if ($constraint->required === true && !$value) {
+            $this->context->addViolation($constraint->requiredMessage);
+            return;
+        } elseif (!$value) {
+            return;
+        }
+
         if (!$value instanceof Term) {
-            $this->context->addViolation($constraint->invalidTypeMessage, array(), $value);
+            $this->context->addViolation($constraint->invalidTypeMessage);
+        }
+
+        $vocabulary = $this->service->findVocabularyByName($constraint->vocabulary);
+        if (!$vocabulary) {
+
+            throw new \LogicException(sprintf("Cannot find vocabulary of name %s", $constraint->vocabulary));
+        }
+
+        if ($value->getVocabulary()->getName() !== $vocabulary->getName()) {
+            $this->context->addViolation($constraint->invalidTermMessage);
+        }
+    }
+
+    protected function validatePlural($value, VocabularyField $constraint)
+    {
+        if ($value instanceof PluralVocabularyField) {
+            $value = $value->getTerms();
+        }
+
+        if ($constraint->required === true && (!$value OR count($value) == 0)) {
+            $this->context->addViolation($constraint->requiredMessage);
+            return;
+        } elseif (!$value) {
+            return;
+        }
+
+        if (!is_array($value) && $value instanceof \Traversable) {
+            $this->context->addViolation($constraint->invalidPluralTypeMessage);
         }
 
         $vocabulary = $this->service->findVocabularyByName($constraint->vocabulary);
@@ -50,10 +105,19 @@ class VocabularyFieldValidator extends ConstraintValidator
         if (!$vocabulary) {
             throw new \LogicException(sprintf("Cannot find vocabulary of name %s", $constraint->vocabulary));
         }
-        try {
-            $vocabulary->getTermByName($value->getName());
-        } catch (\Exception $e) {
-            $this->context->addViolation($constraint->invalidTermMessage, array(), $value->getName());
+
+        foreach ($value as $term) {
+
+            if (!$term instanceof Term) {
+                $this->context->addViolation($constraint->invalidTypeMessage);
+                continue;
+            }
+
+            if ($term->getVocabulary()->getName() !== $vocabulary->getName()) {
+                $this->context->addViolation($constraint->invalidTermMessage);
+            }
         }
+
+
     }
 }

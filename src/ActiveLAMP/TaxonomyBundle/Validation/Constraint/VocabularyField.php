@@ -20,8 +20,12 @@ class VocabularyField extends Constraint
 {
     public $singular = false;
     public $vocabulary;
+    public $required = false;
+
     public $invalidTypeMessage = 'Invalid type provided.';
+    public $invalidPluralTypeMessage = 'Invalid term collection value.';
     public $invalidTermMessage = 'Term does not belong in vocabulary';
+    public $requiredMessage = 'Cannot be empty.';
 
     public function getRequiredOptions()
     {

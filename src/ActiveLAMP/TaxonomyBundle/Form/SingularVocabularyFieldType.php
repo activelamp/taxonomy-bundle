@@ -7,7 +7,9 @@
  */
 
 namespace ActiveLAMP\TaxonomyBundle\Form;
+use ActiveLAMP\TaxonomyBundle\Entity\Vocabulary;
 use ActiveLAMP\TaxonomyBundle\Form\DataTransformer\SingularVocabularyFieldTransformer;
+use ActiveLAMP\TaxonomyBundle\Model\TaxonomyService;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
@@ -21,19 +23,47 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
  */
 class SingularVocabularyFieldType extends AbstractType
 {
+    protected $service;
+
+    protected $vocabularyCache;
+
+    public function __construct(TaxonomyService $service)
+    {
+        $this->service = $service;
+    }
+
+    /**
+     * @param $name
+     * @throws \OutOfBoundsException
+     * @return Vocabulary
+     */
+    protected function getVocabulary($name)
+    {
+        if (isset($this->vocabularyCache[$name])) {
+            return $this->vocabularyCache[$name];
+        }
+        $vocabulary = $this->service->findVocabularyByName($name);
+        if (!$vocabulary) {
+            throw new \OutOfBoundsException(sprintf('Cannot find vocabulary named "%s"', $name));
+        }
+        $this->vocabularyCache[$name] = $vocabulary;
+        return $vocabulary;
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $transformer = new SingularVocabularyFieldTransformer($options['taxonomy_service']);
+        $transformer = new SingularVocabularyFieldTransformer($this->service, $options['vocabulary']);
         $builder->addModelTransformer($transformer);
     }
 
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setRequired(array(
-            'taxonomy_service'
+            'vocabulary'
         ))
         ->setDefaults(array(
-            'invalid_message' => 'Invalid vocabulary term value.'
+            'taxonomy_service' => null,
+            'data_class' => 'ActiveLAMP\\TaxonomyBundle\\Entity\\Term',
         ));
     }
 
