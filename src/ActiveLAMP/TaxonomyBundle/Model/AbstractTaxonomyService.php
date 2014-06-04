@@ -98,6 +98,15 @@ abstract class AbstractTaxonomyService
     }
 
     /**
+     * @param $name
+     * @return Term
+     */
+    public function findTermByName($name)
+    {
+        return $this->terms->findByName($name);
+    }
+
+    /**
      * @param Term $term
      */
     public function deleteTerm(Term $term)

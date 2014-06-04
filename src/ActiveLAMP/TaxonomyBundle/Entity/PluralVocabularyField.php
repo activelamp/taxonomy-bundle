@@ -72,8 +72,8 @@ class PluralVocabularyField implements VocabularyFieldInterface, Collection
         $type, $identifier,
         Collection $collection = null
     ) {
-        $this->vocabulary = $vocabulary;
         $this->em = $em;
+        $this->vocabulary = $vocabulary;
         $this->type = $type;
         $this->identifier = $identifier;
         $this->collection = $collection;

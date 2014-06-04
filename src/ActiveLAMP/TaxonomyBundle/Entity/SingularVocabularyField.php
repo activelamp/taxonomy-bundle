@@ -64,6 +64,7 @@ class SingularVocabularyField extends Term implements VocabularyFieldInterface
     public function __construct(EntityManager $em, Vocabulary $vocabulary, $entityType, $identifier, $term = null)
     {
         $this->em = $em;
+        $this->vocabulary = $vocabulary;
         $this->entityTerm = $term;
         $this->type = $entityType;
         $this->identifier;
