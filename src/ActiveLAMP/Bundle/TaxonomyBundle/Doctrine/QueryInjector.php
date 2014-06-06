@@ -7,6 +7,7 @@
  */
 
 namespace ActiveLAMP\Bundle\TaxonomyBundle\Doctrine;
+
 use ActiveLAMP\Bundle\TaxonomyBundle\Metadata\Entity;
 use ActiveLAMP\Bundle\TaxonomyBundle\Metadata\TaxonomyMetadata;
 use Doctrine\ORM\EntityManager;

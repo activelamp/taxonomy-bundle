@@ -7,14 +7,10 @@
  */
 
 namespace ActiveLAMP\Bundle\TaxonomyBundle\Model;
-use ActiveLAMP\Bundle\TaxonomyBundle\Entity\EntityTerm;
-use ActiveLAMP\Bundle\TaxonomyBundle\Entity\SingularVocabularyField;
+
 use ActiveLAMP\Bundle\TaxonomyBundle\Entity\Vocabulary;
 use ActiveLAMP\Bundle\TaxonomyBundle\Entity\VocabularyFieldInterface;
 use ActiveLAMP\Bundle\TaxonomyBundle\Metadata\TaxonomyMetadata;
-use ActiveLAMP\Bundle\TaxonomyBundle\Model\VocabularyFieldFactory;
-use ActiveLAMP\Bundle\TaxonomyBundle\Model\VocabularyRepositoryInterface;
-use Doctrine\ORM\EntityManager as ObjectManager;
 
 
 /**

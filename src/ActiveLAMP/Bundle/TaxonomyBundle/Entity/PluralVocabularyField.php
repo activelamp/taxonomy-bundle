@@ -7,12 +7,8 @@
  */
 
 namespace ActiveLAMP\Bundle\TaxonomyBundle\Entity;
-use ActiveLAMP\Bundle\TaxonomyBundle\Entity\EntityTerm;
-use ActiveLAMP\Bundle\TaxonomyBundle\Entity\Term;
-use ActiveLAMP\Bundle\TaxonomyBundle\Entity\Vocabulary;
-use ActiveLAMP\Bundle\TaxonomyBundle\Entity\VocabularyFieldInterface;
+
 use ActiveLAMP\Bundle\TaxonomyBundle\Iterator\InnerTermIterator;
-use ActiveLAMP\Bundle\TaxonomyBundle\Metadata\Entity;
 use ActiveLAMP\Bundle\TaxonomyBundle\Model\EntityTermsFinder;
 use Closure;
 use Doctrine\Common\Collections\ArrayCollection;

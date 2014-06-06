@@ -7,6 +7,7 @@
  */
 
 namespace ActiveLAMP\Bundle\TaxonomyBundle\Serializer;
+
 use ActiveLAMP\Bundle\TaxonomyBundle\Entity\Term;
 use ActiveLAMP\Bundle\TaxonomyBundle\Entity\PluralVocabularyField;
 use ActiveLAMP\Bundle\TaxonomyBundle\Metadata\TaxonomyMetadata;

@@ -7,6 +7,7 @@
  */
 
 namespace ActiveLAMP\Bundle\TaxonomyBundle\Annotations;
+
 use Doctrine\Common\Annotations\Annotation;
 
 

@@ -7,9 +7,8 @@
  */
 
 namespace ActiveLAMP\Bundle\TaxonomyBundle\Serializer\Handler;
+
 use ActiveLAMP\Bundle\TaxonomyBundle\Entity\PluralVocabularyField;
-use ActiveLAMP\Bundle\TaxonomyBundle\Metadata\TaxonomyMetadata;
-use ActiveLAMP\Bundle\TaxonomyBundle\Serializer\ArraySerializer;
 use ActiveLAMP\Bundle\TaxonomyBundle\Serializer\SerializerInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use JMS\Serializer\Context;

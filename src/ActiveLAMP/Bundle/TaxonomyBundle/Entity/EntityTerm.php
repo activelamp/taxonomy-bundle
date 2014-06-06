@@ -8,7 +8,6 @@
 
 namespace ActiveLAMP\Bundle\TaxonomyBundle\Entity;
 
-use ActiveLAMP\Bundle\TaxonomyBundle\Entity\Term;
 use Doctrine\ORM\Mapping as ORM;
 
 /**

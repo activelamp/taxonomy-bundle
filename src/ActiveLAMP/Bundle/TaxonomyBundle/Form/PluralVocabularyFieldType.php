@@ -7,6 +7,7 @@
  */
 
 namespace ActiveLAMP\Bundle\TaxonomyBundle\Form;
+
 use ActiveLAMP\Bundle\TaxonomyBundle\Form\DataTransformer\SingularVocabularyFieldTransformer;
 use ActiveLAMP\Bundle\TaxonomyBundle\Model\TaxonomyService;
 use Symfony\Component\Form\AbstractType;

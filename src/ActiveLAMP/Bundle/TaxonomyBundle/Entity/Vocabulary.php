@@ -2,10 +2,8 @@
 
 namespace ActiveLAMP\Bundle\TaxonomyBundle\Entity;
 
-use ActiveLAMP\Bundle\TaxonomyBundle\Entity\Term;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
-use Traversable;
 
 /**
  * Vocabulary

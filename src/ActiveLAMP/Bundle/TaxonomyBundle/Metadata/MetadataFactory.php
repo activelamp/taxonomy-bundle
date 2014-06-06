@@ -7,11 +7,10 @@
  */
 
 namespace ActiveLAMP\Bundle\TaxonomyBundle\Metadata;
-use ActiveLAMP\Bundle\TaxonomyBundle\Metadata\Entity;
+
 use ActiveLAMP\Bundle\TaxonomyBundle\Metadata\Reader\AnnotationReader;
 use ActiveLAMP\Bundle\TaxonomyBundle\Metadata\Reader\ReaderInterface;
 use ActiveLAMP\Bundle\TaxonomyBundle\Metadata\Reader;
-use ActiveLAMP\Bundle\TaxonomyBundle\Metadata\TaxonomyMetadata;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\ClassMetadata;
 

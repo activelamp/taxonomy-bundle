@@ -7,6 +7,7 @@
  */
 
 namespace ActiveLAMP\Bundle\TaxonomyBundle\Entity\Repository;
+
 use ActiveLAMP\Bundle\TaxonomyBundle\Model\VocabularyRepositoryInterface;
 use Doctrine\ORM\EntityRepository;
 

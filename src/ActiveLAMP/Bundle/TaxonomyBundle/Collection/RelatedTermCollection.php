@@ -7,8 +7,7 @@
  */
 
 namespace ActiveLAMP\Bundle\TaxonomyBundle\Collection;
-use ActiveLAMP\Bundle\TaxonomyBundle\Collection\RelatedEntityCollection;
-use ActiveLAMP\Bundle\TaxonomyBundle\Iterator\AbstractInnerMemberIterator;
+
 use ActiveLAMP\Bundle\TaxonomyBundle\Iterator\InnerTermIterator;
 use Traversable;
 

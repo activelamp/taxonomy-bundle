@@ -7,6 +7,7 @@
  */
 
 namespace ActiveLAMP\Bundle\TaxonomyBundle\Model;
+
 use ActiveLAMP\Bundle\TaxonomyBundle\Entity\EntityTerm;
 use ActiveLAMP\Bundle\TaxonomyBundle\Entity\Vocabulary;
 use Doctrine\ORM\EntityManager;

@@ -7,9 +7,6 @@
  */
 
 namespace ActiveLAMP\Bundle\TaxonomyBundle\Metadata;
-use ActiveLAMP\Bundle\TaxonomyBundle\Entity\PluralVocabularyField;
-use ActiveLAMP\Bundle\TaxonomyBundle\Metadata\Vocabulary;
-
 
 /**
  * Class Entity

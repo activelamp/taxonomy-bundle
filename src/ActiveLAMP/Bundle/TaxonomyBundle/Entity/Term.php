@@ -2,7 +2,6 @@
 
 namespace ActiveLAMP\Bundle\TaxonomyBundle\Entity;
 
-use ActiveLAMP\Bundle\TaxonomyBundle\Entity\EntityTerm;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 

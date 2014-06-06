@@ -7,6 +7,7 @@
  */
 
 namespace ActiveLAMP\Bundle\TaxonomyBundle\Doctrine\EventListener;
+
 use ActiveLAMP\Bundle\TaxonomyBundle\Metadata\TaxonomyMetadata;
 use ActiveLAMP\Bundle\TaxonomyBundle\Model\TaxonomyService;
 use Doctrine\Common\EventSubscriber;

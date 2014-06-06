@@ -7,6 +7,7 @@
  */
 
 namespace ActiveLAMP\Bundle\TaxonomyBundle\Model;
+
 use ActiveLAMP\Bundle\TaxonomyBundle\Entity\Term;
 
 

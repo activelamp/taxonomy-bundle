@@ -7,6 +7,7 @@
  */
 
 namespace ActiveLAMP\Bundle\TaxonomyBundle\EventListener;
+
 use ActiveLAMP\Bundle\TaxonomyBundle\Metadata\Entity;
 use ActiveLAMP\Bundle\TaxonomyBundle\Metadata\Reader\AnnotationReader;
 use ActiveLAMP\Bundle\TaxonomyBundle\Metadata\TaxonomyMetadata;

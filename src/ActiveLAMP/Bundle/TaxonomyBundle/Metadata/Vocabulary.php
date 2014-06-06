@@ -7,7 +7,7 @@
  */
 
 namespace ActiveLAMP\Bundle\TaxonomyBundle\Metadata;
-use ActiveLAMP\Bundle\TaxonomyBundle\Entity\PluralVocabularyField;
+
 use Doctrine\Common\Collections\ArrayCollection;
 
 

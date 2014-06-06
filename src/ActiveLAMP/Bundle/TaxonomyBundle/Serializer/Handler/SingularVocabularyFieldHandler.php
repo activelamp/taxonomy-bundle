@@ -7,6 +7,7 @@
  */
 
 namespace ActiveLAMP\Bundle\TaxonomyBundle\Serializer\Handler;
+
 use ActiveLAMP\Bundle\TaxonomyBundle\Entity\SingularVocabularyField;
 use ActiveLAMP\Bundle\TaxonomyBundle\Serializer\ArraySerializer;
 use JMS\Serializer\Context;

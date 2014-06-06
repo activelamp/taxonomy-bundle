@@ -7,8 +7,7 @@
  */
 
 namespace ActiveLAMP\Bundle\TaxonomyBundle\Entity;
-use ActiveLAMP\Bundle\TaxonomyBundle\Entity\EntityTerm;
-use ActiveLAMP\Bundle\TaxonomyBundle\Entity\Vocabulary;
+
 
 
 /**

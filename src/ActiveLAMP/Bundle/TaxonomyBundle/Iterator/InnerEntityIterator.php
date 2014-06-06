@@ -7,8 +7,8 @@
  */
 
 namespace ActiveLAMP\Bundle\TaxonomyBundle\Iterator;
+
 use ActiveLAMP\Bundle\TaxonomyBundle\Entity\EntityTerm;
-use ActiveLAMP\Bundle\TaxonomyBundle\Iterator\AbstractInnerMemberIterator;
 
 
 /**

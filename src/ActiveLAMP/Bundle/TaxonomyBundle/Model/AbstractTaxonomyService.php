@@ -7,16 +7,13 @@
  */
 
 namespace ActiveLAMP\Bundle\TaxonomyBundle\Model;
+
 use ActiveLAMP\Bundle\TaxonomyBundle\Entity\EntityTerm;
 use ActiveLAMP\Bundle\TaxonomyBundle\Entity\Term;
 use ActiveLAMP\Bundle\TaxonomyBundle\Entity\Vocabulary;
 use ActiveLAMP\Bundle\TaxonomyBundle\Entity\VocabularyFieldInterface;
 use ActiveLAMP\Bundle\TaxonomyBundle\Metadata\TaxonomyMetadata;
-use ActiveLAMP\Bundle\TaxonomyBundle\Model\TaxonomizedEntityManager;
-use ActiveLAMP\Bundle\TaxonomyBundle\Model\TermRepositoryInterface;
-use ActiveLAMP\Bundle\TaxonomyBundle\Model\VocabularyRepositoryInterface;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
 
 
