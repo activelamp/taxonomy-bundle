@@ -98,6 +98,7 @@ class SingularVocabularyField extends Term implements VocabularyFieldInterface
 
     public function initialize()
     {
+        exit($this->initialized);
         if ($this->initialized) {
             return;
         }
@@ -107,6 +108,8 @@ class SingularVocabularyField extends Term implements VocabularyFieldInterface
         if ($this->entityTerm !== null) {
             $previous = $this->entityTerm;
         }
+
+        var_dump("ASD");
 
         $finder = new EntityTermsFinder($this->em, $this->vocabulary, $this->type, $this->identifier);
         $entityTerm = $finder->findOne();

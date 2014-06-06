@@ -85,6 +85,8 @@ class EntityTermsFinder
                 'type' => $this->type,
             ))->getQuery()->getOneOrNullResult();
 
+        var_dump("ASD");
+
         return $eTerm;
     }
 }

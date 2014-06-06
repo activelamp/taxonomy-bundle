@@ -17,7 +17,7 @@ use Doctrine\ORM\EntityManager as ObjectManager;
 
 /**
  * Class EntityManager
- *
+ *c
  * @package ActiveLAMP\TaxonomyBundle\Model
  * @author Bez Hermoso <bez@activelamp.com>
  */
