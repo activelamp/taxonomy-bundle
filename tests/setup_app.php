@@ -21,7 +21,7 @@ function add_route($app_dir) {
     fclose($h);
 }
 
-add_bundle('ActiveLAMP\TaxonomyBundle\ALTaxonomyBundle()', $app_dir);
+add_bundle('ActiveLAMP\Bundle\TaxonomyBundle\ALTaxonomyBundle()', $app_dir);
 add_route($app_dir);
 
 print file_get_contents($app_dir . '/AppKernel.php');
