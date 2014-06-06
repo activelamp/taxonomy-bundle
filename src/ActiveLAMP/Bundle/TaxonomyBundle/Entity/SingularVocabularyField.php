@@ -52,7 +52,15 @@ class SingularVocabularyField extends Term implements VocabularyFieldInterface
      */
     protected $entityTerm;
 
+    /**
+     * @var bool
+     */
     protected $initialized = false;
+
+    /**
+     * @var bool
+     */
+    protected $dirty = false;
 
     /**
      * @param EntityManager $em
@@ -103,6 +111,7 @@ class SingularVocabularyField extends Term implements VocabularyFieldInterface
         }
 
         $previous = null;
+
 
         if ($this->entityTerm !== null) {
             $previous = $this->entityTerm;
@@ -170,6 +179,7 @@ class SingularVocabularyField extends Term implements VocabularyFieldInterface
             return $this;
         }
 
+        $this->setDirty(true);
         $eTerm = new EntityTerm();
         $eTerm->setTerm($term);
 
@@ -229,4 +239,21 @@ class SingularVocabularyField extends Term implements VocabularyFieldInterface
     }
 
 
+    /**
+     * @return boolean
+     */
+    public function isDirty()
+    {
+        $this->initialize();
+        return (boolean) $this->dirty;
+    }
+
+    /**
+     * @param boolean $dirty
+     * @return void
+     */
+    public function setDirty($dirty)
+    {
+        $this->dirty = $dirty;
+    }
 }

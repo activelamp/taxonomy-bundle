@@ -7,8 +7,9 @@
  */
 
 namespace ActiveLAMP\Bundle\TaxonomyBundle\Metadata\Reader;
+
 use ActiveLAMP\Bundle\TaxonomyBundle\Metadata\Entity;
-use ActiveLAMP\Bundle\TaxonomyBundle\Metadata\Reader\ReaderInterface;
+use ActiveLAMP\Bundle\TaxonomyBundle\Metadata\Vocabulary;
 use Doctrine\Common\Annotations\AnnotationReader as Reader;
 use ActiveLAMP\Bundle\TaxonomyBundle\Metadata as TaxMetadata;
 
@@ -27,8 +28,40 @@ class AnnotationReader implements ReaderInterface
         $reflectionClass = $metadata->getReflectionClass();
         $reader = new Reader();
         if ($reflectionClass) {
-            $this->readMetadata($metadata, $reader, $reflectionClass, $reflectionClass);
+            $this->read($reflectionClass, $metadata, $reader);
+            //$this->readMetadata($metadata, $reader, $reflectionClass, $reflectionClass);
         }
+    }
+
+    protected function read(\ReflectionClass $reflectionClass, Entity $metadata, Reader $reader)
+    {
+        /** @var $entityMetadata \ActiveLAMP\Bundle\TaxonomyBundle\Annotations\Entity */
+        $entityMetadata = $reader->getClassAnnotation($reflectionClass, 'ActiveLAMP\Bundle\TaxonomyBundle\Annotations\Entity');
+
+        if (!$entityMetadata) {
+            return;
+        }
+
+        $metadata->setType($entityMetadata->getType() ?: $reflectionClass->getName());
+        $metadata->setIdentifier($entityMetadata->getIdentifier());
+        foreach ($reflectionClass->getProperties() as $property) {
+            /* @var $vocab \ActiveLAMP\Bundle\TaxonomyBundle\Metadata\Vocabulary */
+            $vocab = $reader->getPropertyAnnotation($property, 'ActiveLAMP\Bundle\TaxonomyBundle\Annotations\Vocabulary');
+            if ($vocab != null) {
+                if (!$vocab->getName()) {
+                    throw new \DomainException(
+                        sprintf(
+                            "'name' option for Vocabulary annotation must be specified on %s::$%s",
+                            $property->getDeclaringClass()->getName(),
+                            $property->getName()
+                        ));
+                }
+
+                $vocabulary = new Vocabulary($property, $vocab->getName(), $vocab->isSingular());
+                $metadata->addVocabulary($vocabulary);
+            }
+        }
+
     }
 
     protected function readMetadata(

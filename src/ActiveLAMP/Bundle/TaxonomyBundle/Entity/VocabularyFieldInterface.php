@@ -32,4 +32,15 @@ interface VocabularyFieldInterface
      * @return Vocabulary
      */
     public function getVocabulary();
+
+    /**
+     * @return boolean
+     */
+    public function isDirty();
+
+    /**
+     * @param boolean $dirty
+     * @return void
+     */
+    public function setDirty($dirty);
 }

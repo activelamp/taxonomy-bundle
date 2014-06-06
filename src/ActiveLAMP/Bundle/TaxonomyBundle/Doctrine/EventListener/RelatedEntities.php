@@ -9,7 +9,7 @@
 namespace ActiveLAMP\Bundle\TaxonomyBundle\Doctrine\EventListener;
 
 use ActiveLAMP\Bundle\TaxonomyBundle\Entity\EntityTerm;
-use ActiveLAMP\Bundle\TaxonomyBundle\Metadata\TaxonomyMetadata;
+use ActiveLAMP\Bundle\TaxonomyBundle\Model\AbstractTaxonomyService;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Events;
@@ -24,18 +24,14 @@ use Doctrine\ORM\Events;
  */
 class RelatedEntities implements EventSubscriber
 {
+    protected $service;
 
     /**
-     *  @var \ActiveLAMP\Bundle\TaxonomyBundle\Metadata\TaxonomyMetadata
+     * @param AbstractTaxonomyService $service
      */
-    protected $metadata;
-
-    /**
-     * @param \ActiveLAMP\Bundle\TaxonomyBundle\Metadata\TaxonomyMetadata $metadata
-     */
-    public function __construct(TaxonomyMetadata $metadata)
+    public function __construct(AbstractTaxonomyService $service)
     {
-        $this->metadata = $metadata;
+        $this->service = $service;
     }
 
     /**
@@ -62,7 +58,7 @@ class RelatedEntities implements EventSubscriber
 
         if ($entityTerm instanceof EntityTerm) {
 
-            $metadata = $this->metadata->getEntityMetadata($entityTerm->getEntityType());
+            $metadata = $this->service->getMetadata()->getEntityMetadata($entityTerm->getEntityType());
             $entity = $eventArgs->getEntityManager()
                       ->find($metadata->getReflectionClass()->getName(), $entityTerm->getEntityIdentifier());
             if ($entity) {

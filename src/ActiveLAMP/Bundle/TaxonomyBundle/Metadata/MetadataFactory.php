@@ -46,11 +46,7 @@ class MetadataFactory
 
     public function getMetadata(EntityManager $em)
     {
-        $doctrineMetadata = $em->getMetadataFactory()->getLoadedMetadata();
-
-        if (count($doctrineMetadata) == 0) {
-            $doctrineMetadata = $em->getMetadataFactory()->getAllMetadata();
-        }
+        $doctrineMetadata = $em->getMetadataFactory()->getAllMetadata();
 
         $taxMetadata = new TaxonomyMetadata();
 
@@ -72,8 +68,6 @@ class MetadataFactory
                 $prevParent->setParent($pm);
                 $prevParent = $pm;
             }
-
-            var_dump($m->getType());
 
             if ($m->getType() && count($m->getVocabularies()) > 0) {
                 $taxMetadata->addEntityMetadata($m);

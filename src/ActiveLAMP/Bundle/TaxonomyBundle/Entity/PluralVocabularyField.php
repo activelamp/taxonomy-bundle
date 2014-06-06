@@ -66,6 +66,11 @@ class PluralVocabularyField implements VocabularyFieldInterface, Collection
      */
     protected $snapshot;
 
+    /**
+     * @var boolean
+     */
+    protected $dirty = false;
+
     public function __construct(
         EntityManager $em,
         Vocabulary $vocabulary,
@@ -193,6 +198,7 @@ class PluralVocabularyField implements VocabularyFieldInterface, Collection
             }
         }
 
+        $this->setDirty(true);
         $entityTerm = new EntityTerm();
         $entityTerm->setTerm($element);
         return $this->collection->add($entityTerm);
@@ -253,7 +259,11 @@ class PluralVocabularyField implements VocabularyFieldInterface, Collection
     function remove($key)
     {
         $this->initialize();
-        return $this->collection->remove($key);
+        $element = $this->collection->remove($key);
+        if ($element) {
+            $this->setDirty(true);
+        }
+        return $element;
     }
 
     /**
@@ -271,9 +281,11 @@ class PluralVocabularyField implements VocabularyFieldInterface, Collection
         /** @var $eTerm EntityTerm */
         foreach ($this->collection->toArray() as $eTerm) {
             if ($eTerm->getTerm() === $element) {
+                $this->setDirty(true);
                 return $this->collection->removeElement($eTerm);
             }
         }
+
 
         return false;
     }
@@ -633,5 +645,23 @@ class PluralVocabularyField implements VocabularyFieldInterface, Collection
     public function isInitialized()
     {
         return (boolean) $this->initialized;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isDirty()
+    {
+        $this->initialize();
+        return (boolean) $this->dirty;
+    }
+
+    /**
+     * @param boolean $dirty
+     * @return void
+     */
+    public function setDirty($dirty)
+    {
+        $this->dirty = $dirty;
     }
 }

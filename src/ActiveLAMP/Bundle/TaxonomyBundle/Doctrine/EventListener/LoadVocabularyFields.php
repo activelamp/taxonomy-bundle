@@ -9,6 +9,7 @@
 namespace ActiveLAMP\Bundle\TaxonomyBundle\Doctrine\EventListener;
 
 use ActiveLAMP\Bundle\TaxonomyBundle\Metadata\TaxonomyMetadata;
+use ActiveLAMP\Bundle\TaxonomyBundle\Model\AbstractTaxonomyService;
 use ActiveLAMP\Bundle\TaxonomyBundle\Model\TaxonomyService;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;
@@ -24,19 +25,22 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class LoadVocabularyFields implements EventSubscriber
 {
-
-    protected $container;
-
+    /**
+     * @var TaxonomyMetadata
+     */
     protected $metadata;
 
+    /**
+     * @var AbstractTaxonomyService
+     */
     protected $service;
 
     /**
-     * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
+     * @param AbstractTaxonomyService $service
      */
-    public function __construct(ContainerInterface $container)
+    public function __construct(AbstractTaxonomyService $service)
     {
-        $this->container = $container;
+        $this->service = $service;
     }
 
     /**
@@ -57,33 +61,22 @@ class LoadVocabularyFields implements EventSubscriber
     protected function getMetadata()
     {
         if (null === $this->metadata) {
-            $this->metadata = $this->container->get('al_taxonomy.metadata');
+            $this->metadata = $this->service->getMetadata();
         }
 
         return $this->metadata;
     }
 
-    /**
-     * @return TaxonomyService
-     */
-    protected function getService()
-    {
-        if (null === $this->service) {
-            $this->service = $this->container->get('al_taxonomy.taxonomy_service');
-        }
-
-        return $this->service;
-    }
-
     public function postLoad(LifecycleEventArgs $eventArgs)
     {
         $entity = $eventArgs->getEntity();
+        $metadata = $this->getMetadata();
 
-        if (!$this->getMetadata()->hasEntityMetadata($entity)) {
+        if (!$metadata->hasEntityMetadata($entity)) {
             return;
         }
 
-        $this->getService()->loadVocabularyFields($entity);
+        $this->service->loadVocabularyFields($entity);
 
     }
 }

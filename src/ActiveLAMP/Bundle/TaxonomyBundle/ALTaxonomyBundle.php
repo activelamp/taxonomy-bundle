@@ -13,5 +13,4 @@ class ALTaxonomyBundle extends Bundle
         parent::build($container);
         $container->addCompilerPass(new SerializationPass());
     }
-
 }

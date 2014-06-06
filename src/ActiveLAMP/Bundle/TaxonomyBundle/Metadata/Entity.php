@@ -36,12 +36,27 @@ class Entity
      */
     protected $vocabularies = array();
 
+    /**
+     * @var Entity
+     */
+    protected $parent;
+
     public function __construct(\ReflectionClass $refClass, $type = null, $identifier = null, array $vocabularies = array())
     {
         $this->reflectionClass = $refClass;
         $this->type = $type;
         $this->identifier = $identifier;
         $this->vocabularies = $vocabularies;
+    }
+
+    /**
+     * @param Entity $parent
+     * @return $this
+     */
+    public function setParent(Entity $parent)
+    {
+        $this->parent = $parent;
+        return $this;
     }
 
     /**
@@ -82,11 +97,17 @@ class Entity
 
     public function getIdentifier()
     {
+        if ($this->identifier === null) {
+            return $this->parent->getIdentifier();
+        }
         return $this->identifier;
     }
 
     public function getType()
     {
+        if ($this->type === null) {
+            return $this->reflectionClass->getName();
+        }
         return $this->type;
     }
 
@@ -105,17 +126,21 @@ class Entity
      */
     public function getVocabularies()
     {
-        return $this->vocabularies;
+        if (null === $this->parent) {
+            return $this->vocabularies;
+        }
+
+        return array_merge($this->vocabularies, $this->parent->getVocabularies());
+
     }
 
     public function getVocabularyByName($name)
     {
-        foreach ($this->vocabularies as $vocabulary) {
+        foreach ($this->getVocabularies() as $vocabulary) {
             if ($vocabulary->getName() === $name) {
                 return $vocabulary;
             }
         }
-
         return null;
     }
 
@@ -154,7 +179,7 @@ class Entity
     public function extractVocabularyFields($entity)
     {
         $fields = array();
-        foreach ($this->vocabularies as $vocabulary) {
+        foreach ($this->getVocabularies() as $vocabulary) {
             $fields[] = $vocabulary->extractValueInField($entity);
         }
         return $fields;

@@ -11,6 +11,7 @@ namespace ActiveLAMP\Bundle\TaxonomyBundle\EventListener;
 use ActiveLAMP\Bundle\TaxonomyBundle\Metadata\Entity;
 use ActiveLAMP\Bundle\TaxonomyBundle\Metadata\Reader\AnnotationReader;
 use ActiveLAMP\Bundle\TaxonomyBundle\Metadata\TaxonomyMetadata;
+use ActiveLAMP\Bundle\TaxonomyBundle\Model\AbstractTaxonomyService;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -25,23 +26,17 @@ use Symfony\Component\HttpKernel\KernelEvents;
  */
 class ReadMetadata implements EventSubscriberInterface
 {
-
     /**
-     * @var \Doctrine\ORM\EntityManager
+     * @param AbstractTaxonomyService $service
      */
-    protected $em;
-
-    /**
-     * @var \ActiveLAMP\Bundle\TaxonomyBundle\Metadata\TaxonomyMetadata
-     */
-    protected $metadata;
-
-    public function __construct(EntityManager $em, TaxonomyMetadata $metadata)
+    public function __construct(AbstractTaxonomyService $service)
     {
-        $this->em = $em;
-        $this->metadata = $metadata;
+        $this->service = $service;
     }
 
+    /**
+     * @return array
+     */
     public static function getSubscribedEvents()
     {
         return array(
@@ -51,22 +46,9 @@ class ReadMetadata implements EventSubscriberInterface
 
     public function onRequest()
     {
-        $metadatas = $this->em->getMetadataFactory()->getAllMetadata();
-
-        $reader = new AnnotationReader();
-
-        foreach ($metadatas as $doctrineMeta) {
-
-            if (!$doctrineMeta instanceof ClassMetadata) {
-                continue;
-            }
-
-            $entityMeta = new Entity($doctrineMeta->getReflectionClass());
-            $reader->loadMetadataForClass($doctrineMeta->getReflectionClass()->getName(), $entityMeta);
-
-            if ($entityMeta->getType() && count($entityMeta->getVocabularies()) > 0) {
-                $this->metadata->addEntityMetadata($entityMeta);
-            }
-        }
+        /**
+         * Trigger metadata reading.
+         */
+        $metadata = $this->service->getMetadata();
     }
 }

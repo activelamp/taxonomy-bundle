@@ -23,22 +23,19 @@ class TaxonomizedEntityManager
 {
     protected $metadata;
 
-    protected $vocabularies;
-
     protected $fieldFactory;
 
+    protected $service;
+
     /**
-     * @param TaxonomyMetadata $metadata
-     * @param VocabularyRepositoryInterface $vocabularies
+     * @param AbstractTaxonomyService $service
      * @param VocabularyFieldFactory $factory
      */
     public function __construct(
-        TaxonomyMetadata $metadata,
-        VocabularyRepositoryInterface $vocabularies,
+        AbstractTaxonomyService $service,
         VocabularyFieldFactory $factory
     ) {
-        $this->metadata = $metadata;
-        $this->vocabularies = $vocabularies;
+        $this->service = $service;
         $this->fieldFactory = $factory;
     }
 
@@ -55,7 +52,9 @@ class TaxonomizedEntityManager
             $name = $vocabulary;
         }
 
-        $metadata = $this->metadata->getEntityMetadata($entity);
+
+        $taxonomyMetadata = $this->service->getMetadata();
+        $metadata = $taxonomyMetadata->getEntityMetadata($entity);
         $vocabularyMetadata = $metadata->getVocabularyByName($name);
 
         $previousValue = $vocabularyMetadata->extractValueInField($entity);
@@ -68,7 +67,7 @@ class TaxonomizedEntityManager
         }
 
         if (!$vocabulary instanceof Vocabulary) {
-            $vocabulary = $this->vocabularies->findByName($name);
+            $vocabulary = $this->service->findVocabularyByName($name);
             if (!$vocabulary) {
                 throw new \RuntimeException(
                     sprintf(
@@ -98,7 +97,7 @@ class TaxonomizedEntityManager
      */
     public function mountVocabularyFields($entity)
     {
-        $metadata = $this->metadata->getEntityMetadata($entity);
+        $metadata = $this->service->getMetadata()->getEntityMetadata($entity);
 
         foreach ($metadata->getVocabularies() as $vocabularyMetadata) {
             $this->mountVocabularyField($entity, $vocabularyMetadata->getName());

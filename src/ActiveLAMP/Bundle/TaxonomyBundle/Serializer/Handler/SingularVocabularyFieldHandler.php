@@ -9,6 +9,7 @@
 namespace ActiveLAMP\Bundle\TaxonomyBundle\Serializer\Handler;
 
 use ActiveLAMP\Bundle\TaxonomyBundle\Entity\SingularVocabularyField;
+use ActiveLAMP\Bundle\TaxonomyBundle\Entity\Term;
 use ActiveLAMP\Bundle\TaxonomyBundle\Serializer\ArraySerializer;
 use JMS\Serializer\Context;
 use JMS\Serializer\GraphNavigator;
@@ -88,13 +89,15 @@ class SingularVocabularyFieldHandler implements SubscribingHandlerInterface
         }
 
         if ($field instanceof SingularVocabularyField) {
+            $field = $field->getTerm();
+        }
 
-            if ($field->getTerm()) {
-                $serialized = $this->serializer->serializeTerm($field->getTerm());
-                return $serialized;
-            } else {
-                return null;
-            }
+        if (!$field) {
+            return null;
+        }
+
+        if ($field instanceof Term) {
+            return $this->serializer->serializeTerm($field);
         }
 
         throw new \InvalidArgumentException("Cannot serialize. Expected SingularVocabularyField, array, or Traversable.");

@@ -9,6 +9,7 @@
 namespace ActiveLAMP\Bundle\TaxonomyBundle\Doctrine\EventListener;
 
 use ActiveLAMP\Bundle\TaxonomyBundle\Metadata\TaxonomyMetadata;
+use ActiveLAMP\Bundle\TaxonomyBundle\Model\AbstractTaxonomyService;
 use ActiveLAMP\Bundle\TaxonomyBundle\Model\TaxonomyService;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;
@@ -24,17 +25,11 @@ use Doctrine\ORM\Events;
 class RemoveEntityTerms implements EventSubscriber
 {
 
-    /**
-     * @var \ActiveLAMP\Bundle\TaxonomyBundle\Metadata\TaxonomyMetadata
-     */
-    protected $metadata;
+    protected $service;
 
-    /**
-     * @param TaxonomyMetadata $metadata
-     */
-    public function __construct(TaxonomyMetadata $metadata)
+    public function __construct(AbstractTaxonomyService $service)
     {
-        $this->metadata = $metadata;
+        $this->service = $service;
     }
 
     /**
@@ -53,11 +48,11 @@ class RemoveEntityTerms implements EventSubscriber
     {
         $entity = $eventArgs->getEntity();
 
-        if (!$this->metadata->hasEntityMetadata($entity)) {
+        if (!$this->service->getMetadata()->hasEntityMetadata($entity)) {
             return;
         }
 
-        $metadata = $this->metadata->getEntityMetadata($entity);
+        $metadata = $this->service->getMetadata()->getEntityMetadata($entity);
 
         $type = $metadata->getType();
         $id = $metadata->extractIdentifier($entity);

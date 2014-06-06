@@ -63,7 +63,7 @@ class SingularVocabularyFieldType extends AbstractType
         ))
         ->setDefaults(array(
             'taxonomy_service' => null,
-            'data_class' => 'ActiveLAMP\\Bundle\\TaxonomyBundle\\Entity\\Term',
+            //'data_class' => 'ActiveLAMP\\Bundle\\TaxonomyBundle\\Entity\\Term',
         ));
     }
 

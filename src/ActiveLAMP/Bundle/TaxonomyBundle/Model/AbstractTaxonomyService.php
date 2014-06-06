@@ -8,10 +8,16 @@
 
 namespace ActiveLAMP\Bundle\TaxonomyBundle\Model;
 
+use ActiveLAMP\Bundle\TaxonomyBundle\Doctrine\EventListener\LoadVocabularyFields;
+use ActiveLAMP\Bundle\TaxonomyBundle\Doctrine\EventListener\PersistTaxonomies;
+use ActiveLAMP\Bundle\TaxonomyBundle\Doctrine\EventListener\RelatedEntities;
+use ActiveLAMP\Bundle\TaxonomyBundle\Doctrine\EventListener\RemoveEntityTerms;
 use ActiveLAMP\Bundle\TaxonomyBundle\Entity\EntityTerm;
 use ActiveLAMP\Bundle\TaxonomyBundle\Entity\Term;
 use ActiveLAMP\Bundle\TaxonomyBundle\Entity\Vocabulary;
 use ActiveLAMP\Bundle\TaxonomyBundle\Entity\VocabularyFieldInterface;
+use ActiveLAMP\Bundle\TaxonomyBundle\Metadata\MetadataFactory;
+use ActiveLAMP\Bundle\TaxonomyBundle\Metadata\Reader\AnnotationReader;
 use ActiveLAMP\Bundle\TaxonomyBundle\Metadata\TaxonomyMetadata;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManager;
@@ -25,35 +31,70 @@ use Doctrine\ORM\EntityManager;
  */
 abstract class AbstractTaxonomyService
 {
+    /**
+     * @var VocabularyRepositoryInterface
+     */
     protected $vocabularies;
 
+    /**
+     * @var TermRepositoryInterface
+     */
     protected $terms;
 
+    /**
+     * @var \Doctrine\ORM\EntityManager
+     */
     protected $em;
 
+    /**
+     * @var TaxonomyMetadata|null
+     */
     protected $metadata;
 
+    /**
+     * @var TaxonomizedEntityManager
+     */
     protected $taxonomizedEntityManager;
 
     /**
-     * @param VocabularyRepositoryInterface $vocabularies
-     * @param TermRepositoryInterface $terms
-     * @param TaxonomizedEntityManager $entityManager
+     * @var \ActiveLAMP\Bundle\TaxonomyBundle\Metadata\MetadataFactory
+     */
+    protected $metadataFactory;
+
+    /**
      * @param EntityManager $em
-     * @param TaxonomyMetadata $metadata
      */
     public function __construct(
-        VocabularyRepositoryInterface $vocabularies,
-        TermRepositoryInterface $terms,
-        TaxonomizedEntityManager $entityManager,
-        EntityManager $em,
-        TaxonomyMetadata $metadata
+        EntityManager $em
     ) {
-        $this->vocabularies = $vocabularies;
-        $this->terms = $terms;
         $this->em = $em;
-        $this->metadata = $metadata;
-        $this->taxonomizedEntityManager = $entityManager;
+
+        $this->vocabularies =
+            $em->getRepository('ALTaxonomyBundle:Vocabulary');
+        $this->terms =
+            $em->getRepository('ALTaxonomyBundle:Term');
+        $this->metadataFactory =
+            new MetadataFactory(new AnnotationReader());
+        $this->taxonomizedEntityManager =
+            new TaxonomizedEntityManager($this, new VocabularyFieldFactory($em));
+
+        $eventManager = $this->em->getEventManager();
+        $eventManager->addEventSubscriber(new LoadVocabularyFields($this));
+        $eventManager->addEventSubscriber(new RelatedEntities($this));
+        $eventManager->addEventSubscriber(new RemoveEntityTerms($this));
+        $eventManager->addEventSubscriber(new PersistTaxonomies($this));
+
+    }
+
+    /**
+     * @return TaxonomyMetadata
+     */
+    public function getMetadata()
+    {
+        if ($this->metadata === null) {
+            $this->metadata = $this->metadataFactory->getMetadata($this->em);
+        }
+        return $this->metadata;
     }
 
     /**
@@ -155,7 +196,7 @@ abstract class AbstractTaxonomyService
     public function saveEntityTerm(EntityTerm $entityTerm, $flush = true)
     {
         $entity = $entityTerm->getEntity();
-        $metadata = $this->metadata->getEntityMetadata($entity);
+        $metadata = $this->getMetadata()->getEntityMetadata($entity);
         $id = $metadata->extractIdentifier($entity);
 
         if ($id == null) {
@@ -183,7 +224,7 @@ abstract class AbstractTaxonomyService
 
     public function saveTaxonomies($entity, $persist = true)
     {
-        $metadata = $this->metadata->getEntityMetadata($entity);
+        $metadata = $this->getMetadata()->getEntityMetadata($entity);
         $dirty = false;
 
         foreach ($metadata->getVocabularies() as $vocabMetadata) {
@@ -193,6 +234,10 @@ abstract class AbstractTaxonomyService
             if (!$field instanceof VocabularyFieldInterface) {
                 $this->taxonomizedEntityManager->mountVocabularyField($entity, $vocabMetadata->getName());
                 $field = $vocabMetadata->extractValueInField($entity);
+            }
+
+            if (!$field->isDirty()) {
+                continue;
             }
 
             $inserts = $field->getInsertDiff();
@@ -209,6 +254,8 @@ abstract class AbstractTaxonomyService
                 $this->em->remove($eTerm);
                 $dirty = true;
             }
+
+            $field->setDirty(false);
         }
 
         if ($dirty === true && $persist === true) {
