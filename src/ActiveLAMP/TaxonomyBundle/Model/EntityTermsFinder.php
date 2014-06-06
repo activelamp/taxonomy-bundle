@@ -83,9 +83,9 @@ class EntityTermsFinder
                 'vid' => $this->vocabulary->getId(),
                 'id' => $this->identifier,
                 'type' => $this->type,
-            ))->getQuery()->getOneOrNullResult();
-
-        var_dump("ASD");
+            ))
+            ->setMaxResults(1)
+            ->getQuery()->getOneOrNullResult();
 
         return $eTerm;
     }
