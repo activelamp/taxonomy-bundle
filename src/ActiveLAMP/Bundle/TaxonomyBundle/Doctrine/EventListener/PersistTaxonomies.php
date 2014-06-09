@@ -10,6 +10,7 @@ namespace ActiveLAMP\Bundle\TaxonomyBundle\Doctrine\EventListener;
 use ActiveLAMP\Bundle\TaxonomyBundle\Model\AbstractTaxonomyService;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\ORM\Event\PreFlushEventArgs;
 use Doctrine\ORM\Events;
 
 
@@ -35,22 +36,17 @@ class PersistTaxonomies implements EventSubscriber
     public function getSubscribedEvents()
     {
         return array(
-            Events::postUpdate,
-            Events::postPersist,
+            Events::preFlush,
         );
     }
 
-    public function postUpdate(LifecycleEventArgs $eventArgs)
+    public function preFlush(PreFlushEventArgs $eventArgs)
     {
-        $entity = $eventArgs->getEntity();
-
-        if ($this->service->getMetadata()->hasEntityMetadata($entity)) {
-            $this->service->saveTaxonomies($entity);
+        $identityMap = $eventArgs->getEntityManager()->getUnitOfWork()->getIdentityMap();
+        foreach ($identityMap as $class => $entity) {
+            var_dump($entity);
         }
-    }
 
-    public function postPersist(LifecycleEventArgs $eventArgs)
-    {
         $entity = $eventArgs->getEntity();
 
         if ($this->service->getMetadata()->hasEntityMetadata($entity)) {

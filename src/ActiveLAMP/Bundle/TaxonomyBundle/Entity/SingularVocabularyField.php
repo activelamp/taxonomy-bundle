@@ -254,6 +254,7 @@ class SingularVocabularyField extends Term implements VocabularyFieldInterface
      */
     public function setDirty($dirty)
     {
+        //var_dump(sprintf('Setting %s::%s to %s', $this->type, $this->identifier, $dirty ? 'dirty' : 'clean'));
         $this->dirty = $dirty;
     }
 }

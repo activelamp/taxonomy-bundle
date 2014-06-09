@@ -10,6 +10,7 @@ namespace ActiveLAMP\Bundle\TaxonomyBundle\Model;
 
 use ActiveLAMP\Bundle\TaxonomyBundle\Doctrine\EventListener\LoadVocabularyFields;
 use ActiveLAMP\Bundle\TaxonomyBundle\Doctrine\EventListener\PersistTaxonomies;
+use ActiveLAMP\Bundle\TaxonomyBundle\Doctrine\EventListener\PrepareEntityTerms;
 use ActiveLAMP\Bundle\TaxonomyBundle\Doctrine\EventListener\RelatedEntities;
 use ActiveLAMP\Bundle\TaxonomyBundle\Doctrine\EventListener\RemoveEntityTerms;
 use ActiveLAMP\Bundle\TaxonomyBundle\Entity\EntityTerm;
@@ -80,9 +81,10 @@ abstract class AbstractTaxonomyService
 
         $eventManager = $this->em->getEventManager();
         $eventManager->addEventSubscriber(new LoadVocabularyFields($this));
+        $eventManager->addEventSubscriber(new PrepareEntityTerms($this));
         $eventManager->addEventSubscriber(new RelatedEntities($this));
         $eventManager->addEventSubscriber(new RemoveEntityTerms($this));
-        $eventManager->addEventSubscriber(new PersistTaxonomies($this));
+        //$eventManager->addEventSubscriber(new PersistTaxonomies($this));
 
     }
 
@@ -195,16 +197,16 @@ abstract class AbstractTaxonomyService
      */
     public function saveEntityTerm(EntityTerm $entityTerm, $flush = true)
     {
-        $entity = $entityTerm->getEntity();
-        $metadata = $this->getMetadata()->getEntityMetadata($entity);
-        $id = $metadata->extractIdentifier($entity);
+        //$entity = $entityTerm->getEntity();
+        //$metadata = $this->getMetadata()->getEntityMetadata($entity);
+        //$id = $metadata->extractIdentifier($entity);
 
-        if ($id == null) {
-            throw new \LogicException('The entity you wish to tag must be persisted first. Identifier cannot be null or false.');
-        }
+        //if ($id == null) {
+        //    throw new \LogicException('The entity you wish to tag must be persisted first. Identifier cannot be null or false.');
+        //}
 
-        $entityTerm->setEntityIdentifier($id)
-            ->setEntityType($metadata->getType());
+        //$entityTerm->setEntityIdentifier($id)
+        //    ->setEntityType($metadata->getType());
 
         $this->em->persist($entityTerm);
 
@@ -261,5 +263,10 @@ abstract class AbstractTaxonomyService
         if ($dirty === true && $persist === true) {
             $this->em->flush();
         }
+    }
+
+    public function isDirty($entity)
+    {
+        $this->taxonomizedEntityManager->isSuperficiallyDirty($entity);
     }
 }
