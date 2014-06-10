@@ -180,12 +180,9 @@ class TermChoiceList implements ChoiceListInterface
 
         foreach ($choices as $id => $choice) {
             if ($choice instanceof SingularVocabularyField) {
-                $termChoices[$id] = $choice->getTerm();
-            } elseif ($choice instanceof Term) {
-                $termChoices[$id] = $choice;
-            } else {
-                throw new TransformationFailedException('Invalid type.');
+                $choice = $choice->getTerm();
             }
+            $termChoices[$id] = $choice;
         }
 
         return $this->objectChoiceList->getValuesForChoices($termChoices);
@@ -216,12 +213,9 @@ class TermChoiceList implements ChoiceListInterface
 
         foreach ($choices as $id => $choice) {
             if ($choice instanceof SingularVocabularyField) {
-                $termChoices[$id] = $choice->getTerm();
-            } elseif ($choice instanceof Term) {
-                $termChoices[$id] = $choice;
-            } else {
-                throw new TransformationFailedException('Invalid type.');
+                $choice = $choice->getTerm();
             }
+            $termChoices[$id] = $choice;
         }
 
         return $this->objectChoiceList->getValuesForChoices($termChoices);
