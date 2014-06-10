@@ -124,10 +124,14 @@ abstract class AbstractTaxonomyService
 
     /**
      * @param $vocabulary
-     * @return ArrayCollection
+     * @return ArrayCollection|Term[]
      */
     public function findTermsInVocabulary($vocabulary)
     {
+        if (is_scalar($vocabulary)) {
+            $vocabulary = $this->findVocabularyByName($vocabulary);
+        }
+
         return new ArrayCollection($this->terms->findByVocabulary($vocabulary));
     }
 

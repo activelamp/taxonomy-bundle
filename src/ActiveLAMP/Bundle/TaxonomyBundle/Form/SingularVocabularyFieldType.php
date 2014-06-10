@@ -12,6 +12,7 @@ use ActiveLAMP\Bundle\TaxonomyBundle\Form\DataTransformer\SingularVocabularyFiel
 use ActiveLAMP\Bundle\TaxonomyBundle\Model\TaxonomyService;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 
@@ -52,24 +53,35 @@ class SingularVocabularyFieldType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $transformer = new SingularVocabularyFieldTransformer($this->service, $options['vocabulary']);
-        $builder->addModelTransformer($transformer);
+        parent::buildForm($builder, $options);
+        //$transformer = new SingularVocabularyFieldTransformer($options['taxonomy_service'], $options['vocabulary']);
+        //$builder->addModelTransformer($transformer);
     }
 
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
+
+        parent::setDefaultOptions($resolver);
+
+        $resolver->setDefaults(array(
+            'taxonomy_service' => $this->service,
+            'choice_list' => function (Options $options) {
+                return new TermChoiceList($options['taxonomy_service'], $options['vocabulary']);
+            }
+        ));
+
         $resolver->setRequired(array(
             'vocabulary'
         ))
-        ->setDefaults(array(
-            'taxonomy_service' => null,
-            //'data_class' => 'ActiveLAMP\\Bundle\\TaxonomyBundle\\Entity\\Term',
-        ));
+        ->setAllowedTypes(array(
+                'taxonomy_service' => array('ActiveLAMP\\Bundle\\TaxonomyBundle\\Model\\AbstractTaxonomyService'),
+        ))
+        ;
     }
 
     public function getParent()
     {
-        return 'text';
+        return 'choice';
     }
 
     public function getName()

@@ -188,16 +188,26 @@ class SingularVocabularyField extends Term implements VocabularyFieldInterface
         return $this;
     }
 
+    /**
+     * @return bool
+     */
     public function isInitialized()
     {
         return (boolean) $this->initialized;
     }
 
+    /**
+     * @return int|null
+     */
     public function getId()
     {
         return $this->getTerm() ? $this->getTerm()->getId() : null;
     }
 
+    /**
+     * @param string $name
+     * @return $this|Term
+     */
     public function setName($name)
     {
         if (!$this->getTerm()) {
@@ -208,11 +218,26 @@ class SingularVocabularyField extends Term implements VocabularyFieldInterface
         return $this->getTerm();
     }
 
+    /**
+     * @return null|string
+     */
     public function getName()
     {
         return $this->getTerm() ? $this->getTerm()->getName() : null;
     }
 
+    /**
+     * @return null|string
+     */
+    public function getLabelName()
+    {
+        return $this->getTerm() ? $this->getTerm()->getLabelName() : null;
+    }
+
+    /**
+     * @param int $weight
+     * @return $this|Term
+     */
     public function setWeight($weight)
     {
         if (!$this->getTerm()) {
@@ -223,11 +248,18 @@ class SingularVocabularyField extends Term implements VocabularyFieldInterface
         return $this->getTerm();
     }
 
+    /**
+     * @return int|null
+     */
     public function getWeight()
     {
         return $this->getTerm() ? $this->getTerm()->getWeight() : null;
     }
 
+    /**
+     * @param Vocabulary $vocabulary
+     * @return $this|Term
+     */
     public function setVocabulary(Vocabulary $vocabulary = null)
     {
         if (!$this->getTerm()) {
