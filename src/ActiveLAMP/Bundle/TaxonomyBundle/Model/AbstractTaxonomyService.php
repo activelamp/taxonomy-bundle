@@ -224,7 +224,7 @@ abstract class AbstractTaxonomyService
         $this->taxonomizedEntityManager->mountVocabularyFields($entity);
     }
 
-    public function saveTaxonomies($entity, $persist = true)
+    public function saveTaxonomies($entity, $flush = true)
     {
         $metadata = $this->getMetadata()->getEntityMetadata($entity);
         $dirty = false;
@@ -260,13 +260,8 @@ abstract class AbstractTaxonomyService
             $field->setDirty(false);
         }
 
-        if ($dirty === true && $persist === true) {
+        if ($dirty === true && $flush === true) {
             $this->em->flush();
         }
-    }
-
-    public function isDirty($entity)
-    {
-        $this->taxonomizedEntityManager->isSuperficiallyDirty($entity);
     }
 }
