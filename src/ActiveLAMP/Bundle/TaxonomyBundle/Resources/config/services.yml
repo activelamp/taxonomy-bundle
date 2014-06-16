@@ -80,9 +80,3 @@ services:
             - @al_taxonomy.taxonomy_service
         tags:
             - { name: validator.constraint_validator }
-
-    al_taxonomy.serializer.array:
-        class: ActiveLAMP\Bundle\TaxonomyBundle\Serializer\ArraySerializer
-        arguments:
-            - @al_taxonomy.metadata
-            - @al_taxonomy.taxonomy_service

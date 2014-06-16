@@ -5,6 +5,10 @@
         {
             "name": "Tom Friedhof",
             "email": "tom@activelamp.com"
+        },
+        {
+            "name" : "Bez Hermoso",
+            "email" : "bez@activelamp.com"
         }
     ],
     "minimum-stability": "dev",
