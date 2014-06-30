@@ -6,13 +6,8 @@
  * Time: 9:14 AM
  */
 
-namespace ActiveLAMP\Bundle\TaxonomyBundle\Model;
+namespace ActiveLAMP\Bundle\TaxonomyBundle\Taxonomy;
 
-use ActiveLAMP\Bundle\TaxonomyBundle\Doctrine\EventListener\LoadVocabularyFields;
-use ActiveLAMP\Bundle\TaxonomyBundle\Doctrine\EventListener\PersistTaxonomies;
-use ActiveLAMP\Bundle\TaxonomyBundle\Doctrine\EventListener\PrepareEntityTerms;
-use ActiveLAMP\Bundle\TaxonomyBundle\Doctrine\EventListener\RelatedEntities;
-use ActiveLAMP\Bundle\TaxonomyBundle\Doctrine\EventListener\RemoveEntityTerms;
 use ActiveLAMP\Bundle\TaxonomyBundle\Entity\EntityTerm;
 use ActiveLAMP\Bundle\TaxonomyBundle\Entity\Term;
 use ActiveLAMP\Bundle\TaxonomyBundle\Entity\Vocabulary;
@@ -20,8 +15,12 @@ use ActiveLAMP\Bundle\TaxonomyBundle\Entity\VocabularyFieldInterface;
 use ActiveLAMP\Bundle\TaxonomyBundle\Metadata\MetadataFactory;
 use ActiveLAMP\Bundle\TaxonomyBundle\Metadata\Reader\AnnotationReader;
 use ActiveLAMP\Bundle\TaxonomyBundle\Metadata\TaxonomyMetadata;
+use ActiveLAMP\Bundle\TaxonomyBundle\Model\EntityTermRepositoryInterface;
+use ActiveLAMP\Bundle\TaxonomyBundle\Model\TermRepositoryInterface;
+use ActiveLAMP\Bundle\TaxonomyBundle\Model\VocabularyRepositoryInterface;
+use ActiveLAMP\Bundle\TaxonomyBundle\Model\VocabularyFieldFactory;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\EntityManager;
+use Doctrine\Common\Persistence\ObjectManager;
 
 
 /**
@@ -43,7 +42,12 @@ abstract class AbstractTaxonomyService
     protected $terms;
 
     /**
-     * @var \Doctrine\ORM\EntityManager
+     * @var EntityTermRepositoryInterface
+     */
+    protected $entityTerms;
+
+    /**
+     * @var \Doctrine\Common\Persistence\ObjectManager
      */
     protected $em;
 
@@ -63,28 +67,23 @@ abstract class AbstractTaxonomyService
     protected $metadataFactory;
 
     /**
-     * @param EntityManager $em
+     * @param ObjectManager $em
      */
     public function __construct(
-        EntityManager $em
+        ObjectManager $em
     ) {
         $this->em = $em;
-
         $this->vocabularies =
             $em->getRepository('ALTaxonomyBundle:Vocabulary');
         $this->terms =
             $em->getRepository('ALTaxonomyBundle:Term');
+        $this->entityTerms =
+            $em->getRepository('ALTaxonomyBundle:EntityTerm');
+
         $this->metadataFactory =
             new MetadataFactory(new AnnotationReader());
         $this->taxonomizedEntityManager =
-            new TaxonomizedEntityManager($this, new VocabularyFieldFactory($em));
-
-        $eventManager = $this->em->getEventManager();
-        $eventManager->addEventSubscriber(new LoadVocabularyFields($this));
-        $eventManager->addEventSubscriber(new PrepareEntityTerms($this));
-        $eventManager->addEventSubscriber(new RelatedEntities($this));
-        $eventManager->addEventSubscriber(new RemoveEntityTerms($this));
-        //$eventManager->addEventSubscriber(new PersistTaxonomies($this));
+            new TaxonomizedEntityManager($this, new VocabularyFieldFactory($em, $this->entityTerms));
 
     }
 
@@ -201,16 +200,16 @@ abstract class AbstractTaxonomyService
      */
     public function saveEntityTerm(EntityTerm $entityTerm, $flush = true)
     {
-        //$entity = $entityTerm->getEntity();
-        //$metadata = $this->getMetadata()->getEntityMetadata($entity);
-        //$id = $metadata->extractIdentifier($entity);
+        $entity = $entityTerm->getEntity();
+        $metadata = $this->getMetadata()->getEntityMetadata($entity);
+        $id = $metadata->extractIdentifier($entity);
 
-        //if ($id == null) {
-        //    throw new \LogicException('The entity you wish to tag must be persisted first. Identifier cannot be null or false.');
-        //}
+        if ($id == null) {
+            throw new \LogicException('The entity you wish to tag must be persisted first. Identifier cannot be null or false.');
+        }
 
-        //$entityTerm->setEntityIdentifier($id)
-        //    ->setEntityType($metadata->getType());
+        $entityTerm->setEntityIdentifier($id)
+                   ->setEntityType($metadata->getType());
 
         $this->em->persist($entityTerm);
 

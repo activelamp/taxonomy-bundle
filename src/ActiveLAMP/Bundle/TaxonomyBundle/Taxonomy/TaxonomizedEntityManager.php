@@ -6,11 +6,11 @@
  * Time: 9:31 AM
  */
 
-namespace ActiveLAMP\Bundle\TaxonomyBundle\Model;
+namespace ActiveLAMP\Bundle\TaxonomyBundle\Taxonomy;
 
 use ActiveLAMP\Bundle\TaxonomyBundle\Entity\Vocabulary;
 use ActiveLAMP\Bundle\TaxonomyBundle\Entity\VocabularyFieldInterface;
-use ActiveLAMP\Bundle\TaxonomyBundle\Metadata\TaxonomyMetadata;
+use ActiveLAMP\Bundle\TaxonomyBundle\Model\VocabularyFieldFactory;
 
 
 /**

@@ -9,11 +9,11 @@
 namespace ActiveLAMP\Bundle\TaxonomyBundle\Entity;
 
 use ActiveLAMP\Bundle\TaxonomyBundle\Iterator\InnerTermIterator;
-use ActiveLAMP\Bundle\TaxonomyBundle\Model\EntityTermsFinder;
+use ActiveLAMP\Bundle\TaxonomyBundle\Model\EntityTermRepositoryInterface;
 use Closure;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\EntityManager;
+use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\UnitOfWork;
 use Traversable;
 
@@ -71,14 +71,29 @@ class PluralVocabularyField implements VocabularyFieldInterface, Collection
      */
     protected $dirty = false;
 
+    /**
+     * @var \ActiveLAMP\Bundle\TaxonomyBundle\Model\EntityTermRepositoryInterface
+     */
+    protected $entityTerms;
+
+    /**
+     * @param ObjectManager $em
+     * @param \ActiveLAMP\Bundle\TaxonomyBundle\Model\EntityTermRepositoryInterface $entityTerms
+     * @param Vocabulary $vocabulary
+     * @param $type
+     * @param $identifier
+     * @param Collection $collection
+     */
     public function __construct(
-        EntityManager $em,
+        ObjectManager $em,
+        EntityTermRepositoryInterface $entityTerms,
         Vocabulary $vocabulary,
         $type, $identifier,
         Collection $collection = null
     ) {
         $this->em = $em;
         $this->vocabulary = $vocabulary;
+        $this->entityTerms = $entityTerms;
         $this->type = $type;
         $this->identifier = $identifier;
         $this->collection = $collection;
@@ -103,8 +118,7 @@ class PluralVocabularyField implements VocabularyFieldInterface, Collection
             $unManaged = $this->collection->toArray();
         }
 
-        $finder = new EntityTermsFinder($this->em, $this->vocabulary, $this->type, $this->identifier);
-        $eTerms = $finder->find();
+        $eTerms = $this->entityTerms->findEntities($this->vocabulary->getId(), $this->type, $this->identifier);
 
         $this->snapshot = $eTerms;
         $this->collection = new ArrayCollection($eTerms);

@@ -11,7 +11,7 @@ use ActiveLAMP\Bundle\TaxonomyBundle\Entity\SingularVocabularyField;
 use ActiveLAMP\Bundle\TaxonomyBundle\Entity\Term;
 use ActiveLAMP\Bundle\TaxonomyBundle\Entity\Vocabulary;
 use ActiveLAMP\Bundle\TaxonomyBundle\Entity\VocabularyFieldInterface;
-use ActiveLAMP\Bundle\TaxonomyBundle\Model\AbstractTaxonomyService;
+use ActiveLAMP\Bundle\TaxonomyBundle\Taxonomy\AbstractTaxonomyService;
 use Symfony\Component\Form\Exception\TransformationFailedException;
 use Symfony\Component\Form\Extension\Core\ChoiceList\ChoiceListInterface;
 use Symfony\Component\Form\Extension\Core\ChoiceList\ObjectChoiceList;

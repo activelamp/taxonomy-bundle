@@ -11,7 +11,7 @@ use ActiveLAMP\Bundle\TaxonomyBundle\Entity\PluralVocabularyField;
 use ActiveLAMP\Bundle\TaxonomyBundle\Entity\SingularVocabularyField;
 use ActiveLAMP\Bundle\TaxonomyBundle\Entity\Term;
 use ActiveLAMP\Bundle\TaxonomyBundle\Entity\VocabularyFieldInterface;
-use ActiveLAMP\Bundle\TaxonomyBundle\Model\TaxonomyService;
+use ActiveLAMP\Bundle\TaxonomyBundle\Taxonomy\TaxonomyService;
 use ActiveLAMP\Bundle\TaxonomyBundle\Validation\Constraint\VocabularyField;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;

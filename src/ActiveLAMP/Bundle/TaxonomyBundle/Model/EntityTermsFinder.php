@@ -10,6 +10,7 @@ namespace ActiveLAMP\Bundle\TaxonomyBundle\Model;
 
 use ActiveLAMP\Bundle\TaxonomyBundle\Entity\EntityTerm;
 use ActiveLAMP\Bundle\TaxonomyBundle\Entity\Vocabulary;
+use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
 
 
@@ -30,12 +31,12 @@ class EntityTermsFinder
     protected $em;
 
     /**
-     * @param EntityManager $manager
+     * @param \Doctrine\Common\Persistence\ObjectManager $manager
      * @param Vocabulary $vocabulary
      * @param $type
      * @param $identifier
      */
-    public function __construct(EntityManager $manager, Vocabulary $vocabulary, $type, $identifier)
+    public function __construct(ObjectManager $manager, Vocabulary $vocabulary, $type, $identifier)
     {
         $this->em = $manager;
         $this->vocabulary = $vocabulary;

@@ -9,7 +9,7 @@
 namespace ActiveLAMP\Bundle\TaxonomyBundle\Form;
 
 use ActiveLAMP\Bundle\TaxonomyBundle\Form\DataTransformer\SingularVocabularyFieldTransformer;
-use ActiveLAMP\Bundle\TaxonomyBundle\Model\TaxonomyService;
+use ActiveLAMP\Bundle\TaxonomyBundle\Taxonomy\TaxonomyService;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\Options;
@@ -74,7 +74,7 @@ class SingularVocabularyFieldType extends AbstractType
             'vocabulary'
         ))
         ->setAllowedTypes(array(
-                'taxonomy_service' => array('ActiveLAMP\\Bundle\\TaxonomyBundle\\Model\\AbstractTaxonomyService'),
+                'taxonomy_service' => array('ActiveLAMP\\Bundle\\TaxonomyBundle\\Taxonomy\\AbstractTaxonomyService'),
         ))
         ;
     }

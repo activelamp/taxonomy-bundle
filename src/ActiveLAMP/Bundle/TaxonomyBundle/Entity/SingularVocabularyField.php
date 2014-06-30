@@ -8,8 +8,8 @@
 
 namespace ActiveLAMP\Bundle\TaxonomyBundle\Entity;
 
-use ActiveLAMP\Bundle\TaxonomyBundle\Model\EntityTermsFinder;
-use Doctrine\ORM\EntityManager;
+use ActiveLAMP\Bundle\TaxonomyBundle\Model\EntityTermRepositoryInterface;
+use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\UnitOfWork;
 
@@ -63,19 +63,32 @@ class SingularVocabularyField extends Term implements VocabularyFieldInterface
     protected $dirty = false;
 
     /**
-     * @param EntityManager $em
+     * @var \ActiveLAMP\Bundle\TaxonomyBundle\Model\EntityTermRepositoryInterface
+     */
+    protected $entityTerms;
+
+    /**
+     * @param ObjectManager $em
+     * @param EntityTermRepositoryInterface $entityTerms
      * @param Vocabulary $vocabulary
      * @param $entityType
      * @param $identifier
      * @param null $term
      */
-    public function __construct(EntityManager $em, Vocabulary $vocabulary, $entityType, $identifier, $term = null)
-    {
+    public function __construct(
+        ObjectManager $em,
+        EntityTermRepositoryInterface $entityTerms,
+        Vocabulary $vocabulary,
+        $entityType,
+        $identifier,
+        $term = null
+    ) {
         $this->em = $em;
         $this->vocabulary = $vocabulary;
         $this->entityTerm = $term;
         $this->type = $entityType;
         $this->identifier = $identifier;
+        $this->entityTerms = $entityTerms;
     }
 
     /**
@@ -117,8 +130,7 @@ class SingularVocabularyField extends Term implements VocabularyFieldInterface
             $previous = $this->entityTerm;
         }
 
-        $finder = new EntityTermsFinder($this->em, $this->vocabulary, $this->type, $this->identifier);
-        $entityTerm = $finder->findOne();
+        $entityTerm = $this->entityTerms->findEntity($this->vocabulary->getId(), $this->type, $this->identifier);
 
         $this->snapshot = $entityTerm;
         $this->entityTerm = $entityTerm;

@@ -9,7 +9,7 @@
 namespace ActiveLAMP\Bundle\TaxonomyBundle\Form\DataTransformer;
 
 use ActiveLAMP\Bundle\TaxonomyBundle\Entity\Term;
-use ActiveLAMP\Bundle\TaxonomyBundle\Model\TaxonomyService;
+use ActiveLAMP\Bundle\TaxonomyBundle\Taxonomy\TaxonomyService;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Exception\TransformationFailedException;
 
@@ -28,7 +28,7 @@ class SingularVocabularyFieldTransformer implements DataTransformerInterface
     protected $vocabulary;
 
     /**
-     * @param TaxonomyService $service
+     * @param \ActiveLAMP\Bundle\TaxonomyBundle\Taxonomy\TaxonomyService $service
      * @param $vocabulary
      */
     public function __construct(TaxonomyService $service, $vocabulary)

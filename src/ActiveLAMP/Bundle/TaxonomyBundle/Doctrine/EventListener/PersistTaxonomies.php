@@ -7,7 +7,7 @@
  */
 
 namespace ActiveLAMP\Bundle\TaxonomyBundle\Doctrine\EventListener;
-use ActiveLAMP\Bundle\TaxonomyBundle\Model\AbstractTaxonomyService;
+use ActiveLAMP\Bundle\TaxonomyBundle\Taxonomy\AbstractTaxonomyService;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreFlushEventArgs;

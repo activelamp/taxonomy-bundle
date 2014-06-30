@@ -14,6 +14,7 @@ use ActiveLAMP\Bundle\TaxonomyBundle\Entity\Term;
 use ActiveLAMP\Bundle\TaxonomyBundle\Entity\Vocabulary;
 use ActiveLAMP\Bundle\TaxonomyBundle\Entity\VocabularyFieldInterface;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
 
 
@@ -23,13 +24,16 @@ use Doctrine\ORM\EntityManager;
  * @package ActiveLAMP\Bundle\TaxonomyBundle\Model
  * @author Bez Hermoso <bez@activelamp.com>
  */
-class VocabularyFieldFactory 
+class VocabularyFieldFactory
 {
-    protected $em;
+    protected $om;
 
-    public function __construct(EntityManager $em)
+    protected $entityTerms;
+
+    public function __construct(ObjectManager $em, EntityTermRepositoryInterface $entityTerms)
     {
-        $this->em = $em;
+        $this->om = $em;
+        $this->entityTerms = $entityTerms;
     }
 
     /**
@@ -44,7 +48,8 @@ class VocabularyFieldFactory
     {
         if ($singular === true) {
             return new SingularVocabularyField(
-                $this->em,
+                $this->om,
+                $this->entityTerms,
                 $vocabulary,
                 $type,
                 $identifier,
@@ -52,7 +57,8 @@ class VocabularyFieldFactory
             );
         } else {
             return new PluralVocabularyField(
-                $this->em,
+                $this->om,
+                $this->entityTerms,
                 $vocabulary,
                 $type,
                 $identifier,

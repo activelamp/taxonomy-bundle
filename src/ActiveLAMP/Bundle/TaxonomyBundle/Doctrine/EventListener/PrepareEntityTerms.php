@@ -8,7 +8,7 @@
 
 namespace ActiveLAMP\Bundle\TaxonomyBundle\Doctrine\EventListener;
 use ActiveLAMP\Bundle\TaxonomyBundle\Entity\EntityTerm;
-use ActiveLAMP\Bundle\TaxonomyBundle\Model\AbstractTaxonomyService;
+use ActiveLAMP\Bundle\TaxonomyBundle\Taxonomy\AbstractTaxonomyService;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Events;
@@ -24,12 +24,12 @@ class PrepareEntityTerms implements EventSubscriber
 {
 
     /**
-     * @var \ActiveLAMP\Bundle\TaxonomyBundle\Model\AbstractTaxonomyService
+     * @var \ActiveLAMP\Bundle\TaxonomyBundle\Taxonomy\AbstractTaxonomyService
      */
     protected $service;
 
     /**
-     * @param AbstractTaxonomyService $service
+     * @param \ActiveLAMP\Bundle\TaxonomyBundle\Taxonomy\AbstractTaxonomyService $service
      */
     public function __construct(AbstractTaxonomyService $service)
     {

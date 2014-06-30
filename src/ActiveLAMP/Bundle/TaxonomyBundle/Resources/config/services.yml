@@ -26,19 +26,19 @@ services:
             - %al_taxonomy.term.class%
 
 #    al_taxonomy.vocabulary_field_factory:
-#        class: ActiveLAMP\Bundle\TaxonomyBundle\Model\VocabularyFieldFactory
+#        class: ActiveLAMP\Bundle\TaxonomyBundle\Taxonomy\VocabularyFieldFactory
 #        arguments:
 #            - @doctrine.orm.entity_manager
 #
 #    al_taxonomy.entity_manager:
-#        class: ActiveLAMP\Bundle\TaxonomyBundle\Model\TaxonomizedEntityManager
+#        class: ActiveLAMP\Bundle\TaxonomyBundle\Taxonomy\TaxonomizedEntityManager
 #        arguments:
 #            - @al_taxonomy.metadata
 #            - @al_taxonomy.vocabulary_repository
 #            - @al_taxonomy.vocabulary_field_factory
 
     al_taxonomy.taxonomy_service:
-        class: ActiveLAMP\Bundle\TaxonomyBundle\Model\TaxonomyService
+        class: ActiveLAMP\Bundle\TaxonomyBundle\Taxonomy\TaxonomyService
         arguments:
 #            - @al_taxonomy.vocabulary_repository
 #            - @al_taxonomy.term_repository
