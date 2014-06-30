@@ -133,7 +133,7 @@ class Term
     public function setVocabulary(\ActiveLAMP\Bundle\TaxonomyBundle\Entity\Vocabulary $vocabulary = null)
     {
         $this->vocabulary = $vocabulary;
-    
+        $vocabulary->addTerm($this);
         return $this;
     }
 

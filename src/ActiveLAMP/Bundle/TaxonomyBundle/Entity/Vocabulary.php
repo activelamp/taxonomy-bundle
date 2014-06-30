@@ -154,4 +154,14 @@ class Vocabulary
 
         throw new \DomainException(sprintf('Cannot find term of name "%s".', $name));
     }
+
+    /**
+     * @param Term $term
+     */
+    public function addTerm(Term $term)
+    {
+        if (!$this->terms->contains($term)) {
+            $this->terms->add($term);
+        }
+    }
 }
