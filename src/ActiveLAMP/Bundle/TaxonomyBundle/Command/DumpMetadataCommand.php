@@ -32,6 +32,7 @@ class DumpMetadataCommand extends ContainerAwareCommand
     {
         $this
             ->setName('taxonomy:metadata:dump')
+            ->setAliases(array('tax:mdump'))
             ->setDescription('Dumps taxonomy metadata information.')
             ->addArgument('em', InputArgument::OPTIONAL, 'Entity manager name.', 'default');
     }

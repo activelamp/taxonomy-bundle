@@ -26,5 +26,20 @@ class ALTaxonomyExtension extends Extension
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
         $loader->load('forms.yml');
+
+        $bundles = $container->getParameter('kernel.bundles');
+
+        $files = array();
+        foreach ($bundles as $name => $ns) {
+            $ref = new \ReflectionClass($ns);
+            $file = dirname($ref->getFileName()) . '/Resources/config/taxonomy.yml';
+            if (file_exists($file)) {
+                $files[] = $file;
+            }
+        }
+
+        $definition = $container->getDefinition('al_taxonomy.taxonomy_loader');
+        $definition->replaceArgument(0, $files);
+
     }
 }

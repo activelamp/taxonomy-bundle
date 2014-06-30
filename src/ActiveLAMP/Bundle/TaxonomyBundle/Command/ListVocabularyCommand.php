@@ -27,6 +27,7 @@ class ListVocabularyCommand extends ContainerAwareCommand
     {
         $this
             ->setName('taxonomy:vocabulary:list')
+            ->setAliases(array('tax:ls'))
             ->setDescription('List terms of a given vocabulary.')
             ->addArgument('vocabulary', InputArgument::OPTIONAL, 'List terms of which vocabulary?');
     }
