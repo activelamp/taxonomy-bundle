@@ -267,4 +267,12 @@ abstract class AbstractTaxonomyService
             $this->em->flush();
         }
     }
+
+    /**
+     * @return ObjectManager
+     */
+    public function getEntityManager()
+    {
+        return $this->em;
+    }
 }
