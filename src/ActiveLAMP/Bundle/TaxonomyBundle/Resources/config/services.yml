@@ -1,0 +1,48 @@
+parameters:
+    al_taxonomy.vocabulary.class: ActiveLAMP\Bundle\TaxonomyBundle\Entity\Vocabulary
+    al_taxonomy.term.class: ActiveLAMP\Bundle\TaxonomyBundle\Entity\Term
+
+services:
+
+    al_taxonomy.subscriber.read_metadata:
+        class: ActiveLAMP\Bundle\TaxonomyBundle\EventListener\ReadMetadata
+        arguments:
+            - @al_taxonomy.taxonomy_service
+        tags:
+            - { name: kernel.event_subscriber }
+
+    al_taxonomy.vocabulary_repository:
+        class: ActiveLAMP\Bundle\TaxonomyBundle\Model\VocabularyRepositoryInterface
+        factory_service: doctrine.orm.entity_manager
+        factory_method: getRepository
+        arguments:
+            - %al_taxonomy.vocabulary.class%
+
+    al_taxonomy.term_repository:
+        class: ActiveLAMP\Bundle\TaxonomyBundle\Model\TermRepositoryInterface
+        factory_service: doctrine.orm.entity_manager
+        factory_method: getRepository
+        arguments:
+            - %al_taxonomy.term.class%
+
+    al_taxonomy.taxonomy_service:
+        class: ActiveLAMP\Bundle\TaxonomyBundle\Taxonomy\TaxonomyService
+        arguments:
+            - @doctrine.orm.entity_manager
+
+    al_taxonomy.taxonomy_loader:
+        class: ActiveLAMP\Bundle\TaxonomyBundle\Taxonomy\Loader\TaxonomyLoader
+        arguments:
+            - []
+
+    al_taxonomy.metadata:
+        class: ActiveLAMP\Bundle\TaxonomyBundle\Metadata\TaxonomyMetadata
+        factory_service: al_taxonomy.taxonomy_service
+        factory_method: getMetadata
+
+    al_taxonomy.constraint.vocabulary_field_validator:
+        class: ActiveLAMP\Bundle\TaxonomyBundle\Validation\Constraint\VocabularyFieldValidator
+        arguments:
+            - @al_taxonomy.taxonomy_service
+        tags:
+            - { name: validator.constraint_validator }

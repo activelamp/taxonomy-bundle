@@ -1,0 +1,20 @@
+{% extends 'ALTaxonomyBundle::layout.html.twig' %}
+{% form_theme form 'ALTaxonomyBundle:Form:form_row.html.twig' %}
+
+{% block taxonomy_title %}<h1>Add Term to {{ vocabulary.labelName }}</h1>{% endblock %}
+
+{% block taxonomy_content -%}
+
+    {{ form_start(form) }}
+
+    {{ form_widget(form) }}
+    {{ parent() }}
+
+    {{ form_end(form) }}
+
+{% endblock %}
+
+{% block taxonomy_actions %}
+    <li><input type="submit" value="Create" class="btn btn-primary"/></li>
+    <li><a href="{{ path('al_taxonomy_list_terms', {'vocabulary_id': vocabulary.id }) }}" class="btn btn-default">Cancel</a></li>
+{% endblock %}

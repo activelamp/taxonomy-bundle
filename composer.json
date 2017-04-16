@@ -5,6 +5,10 @@
         {
             "name": "Tom Friedhof",
             "email": "tom@activelamp.com"
+        },
+        {
+            "name" : "Bez Hermoso",
+            "email" : "bez@activelamp.com"
         }
     ],
     "minimum-stability": "dev",
@@ -14,7 +18,7 @@
     "license": "MIT",
     "autoload": {
         "psr-0": {
-            "ActiveLAMP\\TaxonomyBundle": "src/"
+            "ActiveLAMP\\Bundle\\TaxonomyBundle": "src/"
         }
     }
 }

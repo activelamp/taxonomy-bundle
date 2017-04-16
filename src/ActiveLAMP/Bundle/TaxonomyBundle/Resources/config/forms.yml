@@ -1,0 +1,14 @@
+services:
+    al_taxonomy.form_type.singular_vocabulary_field:
+        class: ActiveLAMP\Bundle\TaxonomyBundle\Form\SingularVocabularyFieldType
+        arguments:
+            - @al_taxonomy.taxonomy_service
+        tags:
+            - { name: form.type, alias: singular_vocabulary_field }
+
+    al_taxonomy.validator.vocabulary_field_validator:
+        class: ActiveLAMP\Bundle\TaxonomyBundle\Validation\Constraint\VocabularyFieldValidator
+        arguments:
+            - @al_taxonomy.taxonomy_service
+        tags:
+            - { name: validator.constraint_validator, alias: vocabulary_field_validator }

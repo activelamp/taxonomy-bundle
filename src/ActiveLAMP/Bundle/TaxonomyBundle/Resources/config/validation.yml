@@ -1,0 +1,8 @@
+
+ActiveLAMP\Bundle\TaxonomyBundle\Entity\Term:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: name
+
+ActiveLAMP\Bundle\TaxonomyBundle\Entity\Vocabulary:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: name
